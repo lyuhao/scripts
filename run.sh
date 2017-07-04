@@ -1,6 +1,6 @@
 #! /bin/bash
 
-SPARK_HOME=$HOME/summer_scripts/pg_scripts
+SPARK_HOME=$HOME/pb_scripts/spark_scripts
 ONLINE_HOME=$HOME/tailbench-v0.9/$2
 # setup 
 PER_COUNTER_HOME=$HOME/scripts/bash_scripts/IntelPerformanceCounterMonitorV2.8/

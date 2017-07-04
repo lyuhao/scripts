@@ -5,5 +5,5 @@ ONLINE_HOME=$HOME/tailbench-v0.9/$1
 
 $ONLINE_HOME/kill_networked.sh
 
-sudo kill -9 ${cat pcm.pid}
-kill -9 ${cat spark.pid}
+sudo kill -9 $(cat pcm.pid)
+kill -9 $(cat spark.pid)
