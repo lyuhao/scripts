@@ -6,7 +6,7 @@ ONLINE_HOME=$HOME/tailbench-v0.9/$2
 # setup 
 PER_COUNTER_HOME=$HOME/scripts/bash_scripts/IntelPerformanceCounterMonitorV2.8/
 
-$SPARK_HOME/run_$1.sh
+ssh $1 $SPARK_HOME/run_$2.sh
 
 #echo $! > spark.pid
 
