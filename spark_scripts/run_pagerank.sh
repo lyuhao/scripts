@@ -1,3 +1,4 @@
+#! /bin/bash
 /home/yl408/spark/bin/spark-submit --num-executors 20 --jars /home/yl408/spark/examples/target/scala-2.11/jars/scopt_2.11-3.3.0.jar \
 --class org.apache.spark.examples.graphx.LiveJournalPageRank --master spark://clipper04.egr.duke.edu:7077 \
 --deploy-mode client \
