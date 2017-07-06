@@ -3,7 +3,7 @@
 --class org.apache.spark.examples.mllib.DenseKMeans --master spark://clipper04.egr.duke.edu:7077 \
 --deploy-mode client \
 /home/yl408/spark/examples/target/scala-2.11/jars/spark-examples_2.11-2.1.0.jar \
--k 1000 ~/yuhao_datasets/USCensus1990.data.txt &
+~/yuhao_datasets/USCensus1990.data.txt &
 
 echo $! > 1.pid
 
