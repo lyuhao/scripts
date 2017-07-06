@@ -9,4 +9,4 @@ echo $! > 1.pid
 
 wait $(cat 1.pid)
 
-ssh clipper04 '/home/yl408/pb_scripts/kill.sh xapian'
+#ssh clipper04 '/home/yl408/pb_scripts/kill.sh xapian'
