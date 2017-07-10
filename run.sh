@@ -39,6 +39,16 @@ SERVER=$4
 SPARKAPP=$5
 
 WARMUPREQS=$(( 20 * ${QPS} ))
+
+if ps -aux | grep executor | grep spark  > /dev/null
+then
+        echo "ERROR: another spark executor is running, exiting"       
+        exit 1
+fi
+
+
+
+
 #disable NMI watchdog for performance counter
 sudo bash -c "echo 0 > /proc/sys/kernel/nmi_watchdog"
 sudo cpupower frequency-set -g performance
