@@ -5,26 +5,41 @@ import matplotlib.pyplot as plt
 import sys
 import csv 
 
+
 import plotly.plotly as py
 import plotly.graph_objs as go 
 import numpy as np
+
+from scipy.interpolate import griddata
+
 number_core = 48
 
 if (sys.argc <2):
-	print "should provide input file"
+	print "should provide input file path"
 	exit(1)
+
+
+be_ll3_cache_access_number = list()
+be_ll3_cache_miss_number = list()
+be_ll3_cache_miss_rate = list()
+
+ls_ll3_cache_access_number = list()
+ls_ll3_cache_miss_number = list()
+ls_ll3_cache_miss_rate = list()
+
+file_path = str(sys.argv[1])
 
 
 load_level = range(100,1100,100)
 
-filenames = ["kmeans_xapian_12,13_"+str(load) for load in load_level]
+filenames = [file_path+"kmeans_xapian_12,13_"+str(load) for load in load_level]
 
 
-be_l3_cache_access_number = list()
-be_ll3_cache_miss_number = list()
 
-ls_ll3_cache_access_number = list()
-ls_ll3_cache_miss_number = list()
+
+datapoints = list()
+
+
 
 input_file = sys.argv[1]
 file = open(input_file)
@@ -33,6 +48,8 @@ file = open(input_file)
 load_llc = dict()
 
 for load in load_level:
+
+
 
 	filename = "kmeans_xapian_12,13_"+str(load)
 	csv_file = csv.reader(csvfile,delimiter=' ',quotechar='|')
@@ -64,8 +81,11 @@ for load in load_level:
 			L3access = L3Miss / (1-L3Hit)
 			L3Miss_sum += L3Miss
 			L3Hit_sum += L3Hit
+
+		ls_L3Miss_rate = L3Miss_sum / (L3Miss_sum + L3Hit_sum)
 		ls_ll3_cache_miss_number.append(L3Miss_sum)
 		ls_ll3_cache_access_number.append(L3Hit_sum)
+		ls_ll3_cache_miss_rate.append(ls_L3Miss_rate)
 
 		L3Miss_sum = 0
 		L3Hit_sum = 0
@@ -80,11 +100,37 @@ for load in load_level:
 			L3Miss_sum += L3Miss
 			L3Hit_sum += L3Hit
 
+
+		be_L3Miss_rate = L3Miss_sum / (L3Miss_sum + L3Hit_sum)
 		be_ll3_cache_miss_number.append(L3Miss_sum)
 		be_ll3_cache_access_number.append(L3Hit_sum)
+		be_ll3_cache_miss_rate.append(be_L3Miss_rate)
+		datapoints.append((load,ls_ll3_cache_miss_rate,be_ll3_cache_miss_rate))
 
- 	load_llc[load] = 
 
+
+xlist = list()
+value = list()
+
+for point in datapoints:
+	xlist.append(point[0],point[1])
+	value.append(point[2])
+
+xarr = np.array(xlist,dtype=dt)
+varr = np.value(value,dtype=dt)
+
+
+
+grid_x,grd_y = np.mgrid(np.arange(100,1001,1),np.arange(0,1,0.01))
+
+grid_z0 = griddata(xarr, varr, (grid_x, grid_y), method='nearest')
+
+grid_z1 = griddata(xarr, varr, (grid_x, grid_y), method='linear')
+
+grid_z2 = griddata(xarr, varr, (grid_x, grid_y), method='cubic')
+
+
+plot_surface(X,Y,Z)
 #plot figure
 
 
