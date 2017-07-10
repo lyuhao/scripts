@@ -39,7 +39,7 @@ load_llc = dict()
 for load in load_level:
 
 
-
+	print "--------load----------------------"+ str(load)
 	filename = file_path+"kmeans_xapian_"+str(load)+".csv"
 
 	#csv_file = csv.reader(filename,delimiter=' ',quotechar='|')
@@ -72,7 +72,9 @@ for load in load_level:
 		#print Row
 		row = Row.split(';')
 
+		#print i
 		if i < 2:
+			i = i + 1
 			continue
 
 		i = i + 1
@@ -82,14 +84,25 @@ for load in load_level:
 			start_column = core_start_column[ls_core]
 			L3Miss_location = start_column+L3Miss_displacment
 			L3Hit_location = start_column+L3Hit_displacement
-			print row[L3Miss_location]
-			L3Miss = int(row[L3Miss_location])
-			L3Hit = int(row[L3Hit_location])
-			L3access = L3Miss / (1-L3Hit)
-			L3Miss_sum += L3Miss
-			L3Hit_sum += L3Hit
+			#print row[L3Miss_location]
+			L3Miss = float(row[L3Miss_location])
+			L3Hit = float(row[L3Hit_location])
+			
+			##exceptional case ignore it
+			if(L3Hit == 1):
+				L3Miss_modified = 0
+				L3access = 0
+			else:
+				L3Miss_modified = L3Miss
+				L3access = L3Miss / (1-L3Hit)
 
-		ls_L3Miss_rate = L3Miss_sum / (L3Miss_sum + L3Hit_sum)
+			L3Miss_sum += L3Miss_modified
+			L3Hit_sum += L3access*L3Hit
+
+		if (L3access == 0):
+			ls_L3Miss_rate = 1
+		else:
+			ls_L3Miss_rate = L3Miss_sum / (L3Miss_sum + L3Hit_sum)
 		ls_ll3_cache_miss_number.append(L3Miss_sum)
 		ls_ll3_cache_access_number.append(L3Hit_sum)
 		ls_ll3_cache_miss_rate.append(ls_L3Miss_rate)
@@ -101,24 +114,37 @@ for load in load_level:
 			start_column = core_start_column[be_core]
 			L3Miss_location = start_column+L3Miss_displacment
 			L3Hit_location = start_column+L3Hit_displacement
-			L3Miss = int(row[L3Miss_location])
-			L3Hit = int(row[L3Hit_location])
-			L3access = L3Miss / (1-L3Hit)
-			L3Miss_sum += L3Miss
-			L3Hit_sum += L3Hit
+			L3Miss = float(row[L3Miss_location])
+			L3Hit = float(row[L3Hit_location])
+
+			if(L3Hit == 1):
+				L3Miss_modified = 0
+				L3access = 0
+			else:
+				L3Miss_modified = L3Miss
+				L3access = L3Miss / (1-L3Hit)
+
+			L3Miss_sum += L3Miss_modified
+			L3Hit_sum += L3access*L3Hit
 
 
-		be_L3Miss_rate = L3Miss_sum / (L3Miss_sum + L3Hit_sum)
+		if (L3access == 0):
+			be_L3Miss_rate = 1
+		else:
+			be_L3Miss_rate = L3Miss_sum / (L3Miss_sum + L3Hit_sum)
+			
 		be_ll3_cache_miss_number.append(L3Miss_sum)
 		be_ll3_cache_access_number.append(L3Hit_sum)
 		be_ll3_cache_miss_rate.append(be_L3Miss_rate)
 		datapoints.append((load,ls_ll3_cache_miss_rate,be_ll3_cache_miss_rate))
 	
-	length = ls_ll3_cache_miss_rate 
+	length = len(ls_ll3_cache_miss_rate) 
 
-	t = np.linspace(0,length,length*2)
+	t = np.linspace(0,length,length)
+	#print len(ls_ll3_cache_miss_rate)
+	#print len(be_ll3_cache_miss_rate)
 
-	plt.plot(t,lls_ll3_cache_access_number,'r')
+	plt.plot(t,ls_ll3_cache_miss_number,'r')
 	plt.plot(t,be_ll3_cache_access_number,'b')
 	plt.title(str(load))	
 	plt.savefig(str(load)+'.jpg')
