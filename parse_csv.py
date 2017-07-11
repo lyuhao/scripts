@@ -10,6 +10,10 @@ import csv
 #import plotly.graph_objs as go 
 import numpy as np
 
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
 
 from scipy.interpolate import griddata
@@ -36,10 +40,12 @@ datapoints = list()
 
 load_llc = dict()
 
+fig,ax = plt.subplots()
+
 for load in load_level:
 
 
-	print "--------load----------------------"+ str(load)
+	#print "--------load----------------------"+ str(load)
 	filename = file_path+"kmeans_xapian_"+str(load)+".csv"
 
 	#csv_file = csv.reader(filename,delimiter=' ',quotechar='|')
@@ -136,7 +142,7 @@ for load in load_level:
 		be_ll3_cache_miss_number.append(L3Miss_sum)
 		be_ll3_cache_access_number.append(L3Hit_sum)
 		be_ll3_cache_miss_rate.append(be_L3Miss_rate)
-		datapoints.append((load,ls_ll3_cache_miss_rate,be_ll3_cache_miss_rate))
+		datapoints.append((load,L3Miss_sum,ls_L3Miss_rate))
 	
 	length = len(ls_ll3_cache_miss_rate) 
 
@@ -144,34 +150,71 @@ for load in load_level:
 	#print len(ls_ll3_cache_miss_rate)
 	#print len(be_ll3_cache_miss_rate)
 
-	plt.plot(t,ls_ll3_cache_miss_number,'r')
-	plt.plot(t,be_ll3_cache_access_number,'b')
-	plt.title(str(load))	
-	plt.savefig(str(load)+'.jpg')
+	plt.plot(t,be_ll3_cache_miss_number,label=str(load))
+	
+
+	#plt.plot(t,be_ll3_cache_miss_rate,'b')
+	#plt.title(str(load))	
+	#plt.savefig(filename+str(load)+'.jpg')
+
+	#plt.plot(ls_ll3_cache_miss_rate,be_ll3_cache_miss_number,'o')
+	#plt.title(str(load))	 
+	
 
 
-#xlist = list()
-#value = list()
-
-#for point in datapoints:
-	#xlist.append(point[0],point[1])
-	#value.append(point[2])
-
-#xarr = np.array(xlist,dtype=dt)
-#varr = np.value(value,dtype=dt)
+legend = ax.legend(loc='upper center', shadow=True)
+plt.title("batch last level cache miss rate at different load level")
+plt.savefig(file_path+"batch_miss_rate.jpg")
+plt.clf()
 
 
+xlist = list()
+value = list()
 
-#grid_x,grd_y = np.mgrid(np.arange(100,1001,1),np.arange(0,1,0.01))
-
-#grid_z0 = griddata(xarr, varr, (grid_x, grid_y), method='nearest')
-
-#grid_z1 = griddata(xarr, varr, (grid_x, grid_y), method='linear')
-
-#grid_z2 = griddata(xarr, varr, (grid_x, grid_y), method='cubic')
+max_be = 0
+for point in datapoints:
+	xlist.append([point[0],point[1]])
+	max_be = max(point[1],max_be)
+	value.append(point[2])
 
 
-#plot_surface(X,Y,Z)
+dt = np.dtype('int,float')
+#print xlist
+xarr = np.array(xlist)
+
+varr = np.array(value)
+
+
+
+
+
+grid_x,grid_y = np.meshgrid(np.arange(100,1001,1),np.arange(0,max_be,0.5))
+
+#print grid_x.shape
+#print grid_y.shape
+#print xarr.shape
+#print varr.shape
+
+
+grid_z0 = griddata(xarr, varr, (grid_x, grid_y), method='nearest')
+
+grid_z1 = griddata(xarr, varr, (grid_x, grid_y), method='linear')
+
+grid_z2 = griddata(xarr, varr, (grid_x, grid_y), method='cubic')
+
+
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+
+surf = ax.plot_surface(grid_x,grid_y,grid_z0)
+
+
+#ax.set_zlim(-1.01, 1.01)
+#ax.zaxis.set_major_locator(LinearLocator(10))
+#ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+
+plt.savefig(file_path+'ls_be_load.jpg')
+
 #plot figure
 
 
