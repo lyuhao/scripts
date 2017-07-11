@@ -8,15 +8,18 @@ input_file = sys.argv[1]
 file = open(input_file)
 service_time_list = list()
 latency_time_list = list()
-
+start_time_list = list()
 with file:
 	lines = file.readlines()
 	for line in lines:
 		times = line.split(' ')
 		service_time = float(times[1])
-		latency_time = float(times[2])
+		latency_time = float(times[0])+float(times[1])
+		start_time = float(times[2])
 		service_time_list.append(service_time/1000000)
 		latency_time_list.append(latency_time/1000000)
+		start_time_list.append(start_time/1000000000)
+
 ##		print service_time/1000000,' ',latency_time/1000000 
 	
 sorted_service_time = np.sort(service_time_list)
@@ -39,6 +42,9 @@ cdf_file = open(input_file+"_cdf",'w')
 #	print str(sorted_service_time_list)+' '+str(yvals_service_list)+'\n'
 #	cdf_file.write(str(sorted_service_time_list[i])+' '+str(yvals_service_list[i])+'\n') 
 
+#convert start time to int
+
+start_time_list = [int(st-start_time_list[0]) for st in start_time_list]
 
 yvals_latency = np.arange(len(sorted_latency_time))/float(len(sorted_latency_time))
 #plt.plot(sorted_latency_time,yvals_latency)
