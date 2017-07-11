@@ -150,7 +150,9 @@ for load in load_level:
 	#print len(ls_ll3_cache_miss_rate)
 	#print len(be_ll3_cache_miss_rate)
 
-	plt.plot(t,be_ll3_cache_miss_number,label=str(load))
+	if(load == 1000):
+		plt.plot(t,be_ll3_cache_miss_rate,'b',label='rate')
+		plt.plot(t,[a/max(be_ll3_cache_miss_number) for a in be_ll3_cache_miss_number],'r',label='number')
 	
 
 	#plt.plot(t,be_ll3_cache_miss_rate,'b')
@@ -164,7 +166,7 @@ for load in load_level:
 
 legend = ax.legend(loc='upper center', shadow=True)
 plt.title("batch last level cache miss rate at different load level")
-plt.savefig(file_path+"batch_miss_rate.jpg")
+plt.savefig(file_path+"batch_miss.jpg")
 plt.clf()
 
 
