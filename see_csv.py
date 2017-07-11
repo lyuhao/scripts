@@ -35,13 +35,17 @@ CDISP = {   #dictionary for stats displacement for core
 	'TEMP' : 15
 }
 COL_PER_CORE=16
-
+data = {
+	'IPC' : {},
+	'L3MissP' : {},
+	'L3MissN' : {}
+}
 
 #helper functions
 def getColNum (letters): #take csv column index as input, output corresponding number to use
 	sum = 0
 	for letter in letters:
-		sum *= 10
+		sum *= 26
 		numerical = ord(letter) - 64
 		if numerical < 1  or numerical > 26:
 			return -1
@@ -73,11 +77,13 @@ def getCores (corestr):
 	return cores
 			
 
-if (len(sys.argv) < 2):
-	print "should provide input directory path"
+if (len(sys.argv) < 3):
+	print "please provide directory and load level"
 	exit(1)
 
 dirPath = str(sys.argv[1])
+loadLevel = str(sys.argv[2])
+
 if dirPath.endswith('/'):
 	dirPath = dirPath[:-1]
 if not os.path.isdir(dirPath):
@@ -88,50 +94,65 @@ readSetup(dirPath + "/setup.txt")
 
 ls_cores = getCores(params["SERVERCORES"])
 be_cores = getCores(params["SPARKCORES"])
+interestedCores = ls_cores + be_cores
 
-print ls_cores
-print be_cores
+#print ls_cores
+#print be_cores
 
 
+for core  in interestedCores:
+	(data['IPC'])[core] =[]
+	(data['L3MissP'])[core] =[]
+	(data['L3MissN'])[core] =[]
 
-# LS_CORES = [21,22,23]
-# BE_CORES = 12,36#range(14,24)+range(38,48)
+filename = dirPath+"/kmeans_"+str(loadLevel)+".csv"
+core_start_column = [0] * NUMCORE
+core_start_column[0] = getColNum("CF")
 
-# ## stat displacement
-# L3Miss_displacment = 4
-# L3Hit_displacement = 6
+for i in range(1,NUMCORE):
+	core_start_column[i] = core_start_column[i-1] + COL_PER_CORE
 
-# load_level = range(100,200,100)
+#print core_start_column
 
-# datapoints = list()
+lineN = 0
+warmupLines = 2
+with open(filename, 'rb') as csvfile:
+	dataReader = csv.reader(csvfile, delimiter=';')
+	for row in dataReader:
+		lineN +=1
 
-# load_llc = dict()
+		if lineN <= warmupLines: #ignore the first two rows
+			continue
 
-# for load in load_level:
-# 	filename = file_path+"/kmeans_"+str(load)+".csv"
-# 	core_start_column = [0] * number_core
-# 	core_start_column[0] = getColNum("CV")
-# 	for i in range(1,number_core):
-# 		core_start_column[i] = core_start_column[i-1] + COL_PER_CORE
+		for core in interestedCores:
+			coreIPC = float(row[ core_start_column[core] + CDISP['IPC'] ])
+			coreL3MP = 1 - float(row[ core_start_column[core] + CDISP['L3HIT'] ])
+			coreL3MN = float(row[ core_start_column[core] + CDISP['L3MISS'] ])
+			#print "core" + str(core) + "--" + "IPC: " + str(coreIPC)  + "L3MP: " + str(coreL3MP) + "L3MN: " + str(coreL3MN)  
+			(data['IPC'])[core].append(coreIPC)
+			(data['L3MissP'])[core].append(coreL3MP)
+			(data['L3MissN'])[core].append(coreL3MN)
+#print data
 
-# 	be_ll3_cache_access_number = list()
-# 	be_ll3_cache_miss_number = list()
-# 	be_ll3_cache_miss_rate = list()
+lineN -= warmupLines
+t = range(0, lineN)
+statNum = len(data)
+plotIndex = 1
 
-# 	ls_ll3_cache_access_number = list()
-# 	ls_ll3_cache_miss_number = list()
-# 	ls_ll3_cache_miss_rate = list()
-# 	with open(filename, 'rb') as csvfile:
-# 		dataReader = csv.reader(csvfile, delimiter=';')
-# 		i = 0
-# 		for row in dataReader:
-# 			#print Row
-# 			i = i + 1
-# 			if i <= 2: #ignore the first two rows
-# 				continue
+for stat in data.keys():
+	plt.subplot(statNum, 1, plotIndex)
 
-# 			L3Miss_sum = 0
-# 			L3Hit_sum = 0
+	for core in interestedCores:
+		#print (str(core) + " " + stat + ":")
+		#print (data[stat])[core]
+		plt.plot(t, (data[stat])[core], label = ("core" + str(core)) )
+		plt.legend()
+		plt.title(stat)
+		#plt.gca().set_xlim([0, 100])
+	plotIndex +=1
+plt.show()
+
+
 
 
 # 			for ls_core in LS_CORES: #counting for server thread pool?
