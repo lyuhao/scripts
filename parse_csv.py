@@ -110,7 +110,7 @@ for load in load_level:
 		else:
 			ls_L3Miss_rate = L3Miss_sum / (L3Miss_sum + L3Hit_sum)
 		ls_ll3_cache_miss_number.append(L3Miss_sum)
-		ls_ll3_cache_access_number.append(L3Hit_sum)
+		ls_ll3_cache_access_number.append(L3Hit_sum+L3Miss_sum)
 		ls_ll3_cache_miss_rate.append(ls_L3Miss_rate)
 
 		L3Miss_sum = 0
@@ -140,7 +140,7 @@ for load in load_level:
 			be_L3Miss_rate = L3Miss_sum / (L3Miss_sum + L3Hit_sum)
 			
 		be_ll3_cache_miss_number.append(L3Miss_sum)
-		be_ll3_cache_access_number.append(L3Hit_sum)
+		be_ll3_cache_access_number.append(L3Hit_sum+L3Miss_sum)
 		be_ll3_cache_miss_rate.append(be_L3Miss_rate)
 		datapoints.append((load,L3Miss_sum,ls_L3Miss_rate))
 	
