@@ -3,59 +3,146 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
-import csv 
-input_file = sys.argv[1]
+
+
+
+input_file = str(sys.argv[1])
 file = open(input_file)
-service_time_list = list()
-latency_time_list = list()
+
+ids = []
+genTimes = []
+svcTimes = []
+ltcTimes = []
+finTimes = []
+
+
+print "Reading data from " + input_file
 
 with file:
 	lines = file.readlines()
 	for line in lines:
 		times = line.split(' ')
-		service_time = float(times[1])
-		latency_time = float(times[2])
-		service_time_list.append(service_time/1000000)
-		latency_time_list.append(latency_time/1000000)
-##		print service_time/1000000,' ',latency_time/1000000 
-	
-sorted_service_time = np.sort(service_time_list)
-sorted_latency_time = np.sort(latency_time_list)
+		rid = int(times[0])
+		genTime = float(times[1])
+		queueTime = int(times[2])
+		svcTime = float(times[3])
+		ltcTime = float(times[4])
+
+		ids.append(rid)
+		genTimes.append(genTime/1000000) #convert to ms
+		svcTimes.append(svcTime/1000000) #convert to ms
+		ltcTimes.append(ltcTime/1000000) #convert to ms
+		finTimes.append((genTime+ltcTime)/1000000)
+file.close()
+
+print "Creating plots from raw data"
+# print "Creating time vs id plot"
+# fig,ax = plt.subplots()
+# fig.suptitle('Service and Response Time vs. Id')
+# ax.plot(ids,svcTimes,'go',label='service')
+# ax.plot(ids,ltcTimes,'ro',label='latency')
+# ax.set_xlabel('id')
+# ax.set_ylabel('time (ms)')
+# plt.legend()
+# #plt.show()
+# fig.savefig(input_file+'_time_vs_id.jpg')
+# plt.close(fig)
+
+# print "Creating latency vs service plot"
+# fig,ax = plt.subplots()
+# fig.suptitle('Latency vs. Service Time')
+# ax.plot(svcTimes,ltcTimes,'ko')
+# ax.set_xlabel('Service time (ms)')
+# ax.set_ylabel('Latency time (ms)')
+# #plt.show()
+# fig.savefig(input_file+'_latency_vs_service.jpg')
+# plt.close(fig)
+
+# print "Creating id vs time plot"
+# fig,ax = plt.subplots()
+# fig.suptitle('Id vs. Time')
+# ax.plot(genTimes,ids,'g',label='generation time')
+# ax.plot(finTimes,ids,'r',label='finish time')
+# ax.set_xlabel('time (ms)')
+# ax.set_ylabel('id')
+# plt.legend()
+# plt.show()
+# fig.savefig(input_file+'_id_vs_time.jpg')
+# plt.close(fig)
+
+# print "Creating latency vs generation time plot"
+# fig,ax = plt.subplots()
+# fig.suptitle('Latency vs. Generation Time')
+# ax.plot(genTimes,ltcTimes,'o',)
+# ax.set_xlabel('generation time (ms)')
+# ax.set_ylabel('latency time (ms)')
+# # plt.show()
+# fig.savefig(input_file+'_latency_vs_generation.jpg')
+# plt.close(fig)	
+
+print "Creating latency and service  vs generation time plot"
+fig,ax = plt.subplots()
+fig.suptitle('Service and Response Time vs. Generation Time ')
+ax.plot(genTimes,ltcTimes,'r-',label='latency')
+ax.plot(genTimes, svcTimes,'g-',label='service')
+ax.set_xlabel('generation time (ms)')
+ax.set_ylabel('time (ms)')
+plt.legend()
+#plt.show()
+fig.savefig(input_file+'_time_vs_gen.jpg')
+plt.close(fig)
+
+print "Sorting"
+
+sorted_service_time = np.sort(svcTimes)
+sorted_latency_time = np.sort(ltcTimes)
 
 sorted_service_time_list = list(sorted_service_time)
 sorted_latency_time_list = list(sorted_latency_time)
 
-#print list(sorted_service_time)
-yvals_service = np.arange(len(sorted_service_time))/float(len(sorted_service_time))
-#plt.plot(sorted_service_time,yvals_service)
-#plt.show()
+assert len(sorted_latency_time) == len(sorted_service_time)
+yvals = np.arange(len(sorted_service_time))/float(len(sorted_service_time))
+yvals_list = list(yvals)
 
-yvals_service_list = list(yvals_service)
-file.close()
-
+print "Writing to cdf file"
 cdf_file = open(input_file+"_cdf",'w')
 
-#for i in range(0,len(yvals_service_list)):
-#	print str(sorted_service_time_list)+' '+str(yvals_service_list)+'\n'
-#	cdf_file.write(str(sorted_service_time_list[i])+' '+str(yvals_service_list[i])+'\n') 
+index_95_l = 0 
+index_99_l = 0
+index_95_s = 0
+index_99_s = 0
 
-
-yvals_latency = np.arange(len(sorted_latency_time))/float(len(sorted_latency_time))
-#plt.plot(sorted_latency_time,yvals_latency)
-#plt.show()
-
-yvals_latency_list = list(yvals_latency)
-
-index_95 = 0 
-index_99 = 0
-for i in range(0,len(yvals_service_list)):
-#	print str(sorted_service_time_list)+' '+str(yvals_service_list)+'\n'
-	cdf_file.write(str(sorted_latency_time_list[i])+' '+str(yvals_latency_list[i])+'\n') 
-	if ((yvals_latency_list[i]- 0.99) < 1e-4):
+for i in range(0,len(yvals_list)):
+	cdf_file.write(str(yvals_list[i]) + ' ')
+	cdf_file.write(str(sorted_service_time_list[i])+' ') 
+	cdf_file.write(str(sorted_latency_time_list[i])+'\n') 
+	if ((yvals_list[i]- 0.99) < 1e-4):
 		index_99 = i
-	if ((yvals_latency_list[i]-0.95) < 1e-4):
+	if ((yvals_list[i]-0.95) < 1e-4):
 		index_95 = i
+cdf_file.close()
 
+print '95th-percentile service time: ' + str(sorted_service_time_list[index_95])
+print '99th-percentile service time: ' + str(sorted_service_time_list[index_99])
+print '95th-percentile latency time: ' + str(sorted_latency_time_list[index_95])
+print '99th-percentile latency time: ' + str(sorted_latency_time_list[index_99])
 
-print '95th-percentile: ', sorted_latency_time_list[index_95]
-print '99th-percentile: ', sorted_latency_time_list[index_99]
+print "Writing to analysis file"
+analysis_file = open(input_file+"_analysis",'w')
+analysis_file.write('95service:' + str(sorted_service_time_list[index_95]) + '\n')
+analysis_file.write('99service:' + str(sorted_service_time_list[index_99]) + '\n')
+analysis_file.write('95latency:' + str(sorted_latency_time_list[index_95]) + '\n')
+analysis_file.write('99latency:' + str(sorted_latency_time_list[index_99]) + '\n')
+analysis_file.close()
+
+print "plotting distribution"
+fig,ax = plt.subplots()
+fig.suptitle('Percentile vs. Time')
+ax.plot(sorted_service_time,yvals_list,'g',label='service')
+ax.plot(sorted_latency_time,yvals_list,'r',label='latency')
+ax.set_xlabel('time (ms)')
+ax.set_ylabel('percentile')
+plt.legend()
+#plt.show()
+fig.savefig(input_file+'_distribution.jpg')
+plt.close(fig)
