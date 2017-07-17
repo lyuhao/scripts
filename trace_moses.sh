@@ -31,13 +31,14 @@ CLIENTCORES=$3
 FILENAME=$4
 PCMCORES=24-35
 
+mkdir ${FILENAME}
 
 WARMUPREQS=$(( 20 * ${QPS} ))
 
 #write setup
 echo -e "QPS=${QPS}\nSERVERCORES=${SERVERCORES}\nCLIENTCORES=${CLIENTCORES}" | tee ${FILENAME}.setup
 echo -e "FILENAME=${FILENAME}\nPCMCORES=${PCMCORES}" | tee -a ${FILENAME}.setup
-
+mv ${FILENAME}.setup ${FILENAME}/.
 
 #disable NMI watchdog for performance counter
 sudo bash -c "echo 0 > /proc/sys/kernel/nmi_watchdog"
@@ -53,7 +54,8 @@ sleep 5
 taskset -c 8 ${ONLINE_HOME}/run_networked.sh 2 0 ${WARMUPREQS} ${SERVERCORES} \
 				${QPS} 1 ${CLIENTCORES} &
 echo $! > onlineTool.pid
-echo -e "moses started at $( date )" | tee ${FILENAME}.time
+echo -e "moses started at $( date +%s)" | tee ${FILENAME}.time
+mv ${FILENAME}.time ${FILENAME}/.
 
 sleep 17m
 
@@ -71,5 +73,11 @@ sudo cpupower frequency-set -g ondemand
 while ![ -e lats.bin ]; do
 	sleep 1
 done
+mv lats.bin ${FILENAME}/.
 
-mv lats.bin ./${FILENAME}.bin
+while ![ -e ${FILENAME}.csv ]; do
+	sleep 1
+done
+mv ${FILENAME}.csv ${FILENAME}/.
+
+
