@@ -21,7 +21,7 @@ if [ "$#" -ne 4 ]
 then
 	echo "To be used on server to deploy LC Applicatoin"
 	echo "Please call the with the following format:"
-	echo "./run.sh [QPS SERVERCORES CLIENTCORESi FILENAME]"
+	echo "./run.sh [QPS SERVERCORES CLIENTCORES FILENAME]"
 	exit 1
 fi
 #parameters
@@ -30,6 +30,13 @@ SERVERCORES=$2
 CLIENTCORES=$3
 FILENAME=$4
 PCMCORES=24-35
+
+
+if [ -d ${FILENAME} ]
+then
+        echo "ERROR: Directory ${FILENAME} already exists"
+        exit 1
+fi
 
 mkdir ${FILENAME}
 
@@ -70,12 +77,12 @@ sudo bash -c "echo 1 > /proc/sys/kernel/nmi_watchdog"
 sudo cpupower frequency-set -g ondemand
 
 
-while ![ -e lats.bin ]; do
+while ! [ -e lats.bin ]; do
 	sleep 1
 done
 mv lats.bin ${FILENAME}/.
 
-while ![ -e ${FILENAME}.csv ]; do
+while ! [ -e ${FILENAME}.csv ]; do
 	sleep 1
 done
 mv ${FILENAME}.csv ${FILENAME}/.
