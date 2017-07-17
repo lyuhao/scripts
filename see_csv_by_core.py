@@ -5,71 +5,15 @@ import matplotlib.pyplot as plt
 import sys
 import csv 
 
-from scipy.interpolate import griddata
-
 import os.path
 
+import helpers
 
 
-params = {}
-NUMCORE=48
-CDISP = {   #dictionary for stats displacement for core
-	'EXEC' : 0,
-	'IPC' : 1,
-	'FREQ' : 2,
-	'AFREQ' : 3,
-	'L3MISS' : 4,
-	'L2MISS' : 5,
-	'L3HIT' : 6,
-	'L2HIT' : 7,
-	'L3CLK' : 8,
-	'L2CLK' : 9,
-	'C0res' : 10,
-	'C1res' : 11,
-	'C3res' : 12,
-	'C6res' : 13,
-	'C7res' : 14,
-	'TEMP' : 15
-}
-COL_PER_CORE=16
+
+
 
 interestedTrace = ['EXEC', 'IPC', 'FREQ', 'AFREQ', 'L3MISS', 'L2MISS', 'L3HIT','L2HIT', 'L3CLK', 'L2CLK']
-
-#helper functions
-def getColNum (letters): #take csv column index as input, output corresponding number to use
-	sum = 0
-	for letter in letters:
-		sum *= 26
-		numerical = ord(letter) - 64
-		if numerical < 1  or numerical > 26:
-			return -1
-		else:
-			sum += numerical
-	return sum - 1
-
-def readSetup (filePath):
-	with open(filePath, 'r') as setup:
-		for line in setup:
-			line = line.strip()
-			param = line.split("=")
-			params[param[0]] = param[1]
-
-def getCores (corestr):
-	cores = list()
-	corestr = corestr.strip()
-	groups = corestr.split(",")
-	for group in groups:
-		bounds = group.split("-")
-		if len(bounds) == 1:
-			cores.append(int(bounds[0]))
-		elif len(bounds) == 2:
-			for c in range(int(bounds[0]),int(bounds[1])+1):
-				cores.append(c)
-		else:
-			print ('getCores: parsing error')
-			exit(1)
-	return cores
-			
 
 if len(sys.argv) < 2:
 	print "please provide csv file"
@@ -95,22 +39,39 @@ if not os.path.isfile(setupFile):
 	print "Cannot find setup file for trial " + setupFile
 	exit(1)
 
-readSetup(setupFile)
+helpers.readSetup(setupFile)
 
-ls_cores = getCores(params["SERVERCORES"])
+ls_cores = helpers.getCores(helpers.params["SERVERCORES"])
 #print ls_cores
 
 
-core_start_column = [0] * NUMCORE
-core_start_column[0] = getColNum("CF")
+core_start_column = [0] * helpers.NUMCORE
+core_start_column[0] = helpers.getColNum("CF")
 
-for i in range(1,NUMCORE):
-	core_start_column[i] = core_start_column[i-1] + COL_PER_CORE
+for i in range(1,helpers.NUMCORE):
+	core_start_column[i] = core_start_column[i-1] + helpers.COL_PER_CORE
 
 #print core_start_column
 
+# mosesStartingTime = -1
+# with open(trialName+'.time', 'r') as f:
+# 	line = f.readline()
+# 	print line
+# 	mosesStartingTime = helpers.getStartTime(line)
+# print 'moses started at ' + str(mosesStartingTime)
+
+firstRequestGenTime = -1
+lastRequestGenTime = -1
+with open(trialName+'.bin', 'r') as f:
+	lines = f.readlines()
+	firstRequestGenTime = float((lines[0].split())[1])
+	lastRequestGenTime = float((lines[-1].split())[1])
+print 'first request generated at' + str(firstRequestGenTime)
+print 'last request generated at ' + str(lastRequestGenTime)
+
 #initialize data dict
 datas = {}
+times = []
 for core  in ls_cores:
 	datas[core] = {}
 	for trace in interestedTrace:
@@ -127,18 +88,23 @@ with open(csvFile, 'rb') as csvfile:
 		if lineN <= warmupLines: #ignore the first two rows
 			continue
 
+		dataTime = helpers.getCsvTime(row[0], row[1])
+		# print dataTime
+		if dataTime < firstRequestGenTime:
+			continue
+		if dataTime > lastRequestGenTime:
+			break
+		times.append(dataTime)
 		for core in ls_cores:
 			for trace in interestedTrace:
-				data = float(row[core_start_column[core] + CDISP[trace] ])
+				data = float(row[core_start_column[core] + helpers.CDISP[trace] ])
 				datas[core][trace].append(data)
 
 print 'Plotting'
-lineN -= warmupLines
-t = range(0, lineN)
 
 for core in ls_cores:
 	for trace in interestedTrace:
 		plt.suptitle('Core' + str(core) + ' ' + trace)
-		plt.plot(t, datas[core][trace])
+		plt.plot(times, datas[core][trace])
 		plt.savefig(trialName+ '_core' + str(core) + '_' + trace + '.jpg' )
 		plt.close()
