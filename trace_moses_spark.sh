@@ -95,7 +95,7 @@ sudo cpupower frequency-set -g ondemand
 while ! [ -e lats.bin ]; do
 	sleep 1
 done
-mv lats.bin ${FILENAME}/.
+mv lats.bin ${FILENAME}/${FILENAME}.bin
 
 while ! [ -e ${FILENAME}.csv ]; do
 	sleep 1
