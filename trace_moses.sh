@@ -17,18 +17,21 @@ then
         exit 1
 fi
 
-if [ "$#" -ne 4 ]
+
+if [ "$#" -ne 5 ]
 then
 	echo "To be used on server to deploy LC Applicatoin"
 	echo "Please call the with the following format:"
-	echo "./run.sh [QPS SERVERCORES CLIENTCORES FILENAME]"
+	echo "./run.sh [QPS SERVERCORES CLIENTCORES FILENAME MAXREQS]"
 	exit 1
 fi
+
 #parameters
 QPS=$1
 SERVERCORES=$2
 CLIENTCORES=$3
 FILENAME=$4
+MAXREQS=$5
 PCMCORES=24-35
 
 
@@ -45,7 +48,15 @@ WARMUPREQS=$(( 20 * ${QPS} ))
 #write setup
 echo -e "QPS=${QPS}\nSERVERCORES=${SERVERCORES}\nCLIENTCORES=${CLIENTCORES}" | tee ${FILENAME}.setup
 echo -e "FILENAME=${FILENAME}\nPCMCORES=${PCMCORES}" | tee -a ${FILENAME}.setup
+echo -e "MAXREQS=${MAXREQS}" | tee -a ${FILENAME}.setup
 mv ${FILENAME}.setup ${FILENAME}/.
+
+#manipulate MAXREQS such that lats.bin ends exactly where it should
+if ! [ ${MAXREQS} -eq 0 ]
+then
+        MAXREQS=$(( ${MAXREQS} - ${WARMUPREQS} + 1  ))
+fi
+
 
 #disable NMI watchdog for performance counter
 sudo bash -c "echo 0 > /proc/sys/kernel/nmi_watchdog"
@@ -58,13 +69,18 @@ echo $! > pcm.pid
 sleep 5
 
 #start moses
-taskset -c 8 ${ONLINE_HOME}/run_networked.sh 2 0 ${WARMUPREQS} ${SERVERCORES} \
+taskset -c 8 ${ONLINE_HOME}/run_networked.sh 2 ${MAXREQS} ${WARMUPREQS} ${SERVERCORES} \
 				${QPS} 1 ${CLIENTCORES} &
 echo $! > onlineTool.pid
 echo -e "moses started at $( date +%s)" | tee ${FILENAME}.time
 mv ${FILENAME}.time ${FILENAME}/.
 
-sleep 17m
+if [ ${MAXREQS} -eq 0 ]
+then
+	sleep 17m
+else
+	wait $(cat onlineTool.pid)
+fi
 
 # kill moses
 ${ONLINE_HOME}/kill_server.sh
