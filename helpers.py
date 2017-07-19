@@ -44,6 +44,7 @@ def getColNum (letters): #take csv column index as input, output corresponding n
 	return sum - 1
 
 def readSetup (filePath):
+	params.clear()
 	with open(filePath, 'r') as setup:
 		for line in setup:
 			line = line.strip()
