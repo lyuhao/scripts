@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 #setup
 SPARK_HOME=/home/ds318/gitRepo/scripts/spark_scripts

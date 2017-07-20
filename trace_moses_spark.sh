@@ -25,11 +25,11 @@ then
         exit 1
 fi
 
-if [ "$#" -ne 6 ]
+if [ "$#" -ne 7 ]
 then
 	echo "To be used on server to deploy LC Applicatoin"
 	echo "Please call the with the following format:"
-	echo "./run.sh [QPS SERVERCORES CLIENTCORES SERVER SPARKAPP FILENAME]"
+	echo "./trace_moses_spark.sh [QPS SERVERCORES CLIENTCORES SERVER SPARKAPP FILENAME SPARKCORES]"
 	exit 1
 fi
 #parameters
@@ -40,7 +40,7 @@ SERVER=$4
 SPARKAPP=$5
 FILENAME=$6
 PCMCORES=24-35
-SPARKCORES=12-13,36-37
+SPARKCORES=$7
 
 if [ -d ${FILENAME} ]
 then
