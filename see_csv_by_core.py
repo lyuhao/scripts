@@ -41,8 +41,11 @@ if not os.path.isfile(setupFile):
 
 helpers.readSetup(setupFile)
 
-ls_cores = helpers.getCores(helpers.params["SERVERCORES"])
-#print ls_cores
+if len(sys.argv) == 3:
+	CoreGroup = str(sys.argv[2])
+else:
+	CoreGroup = "SERVERCORES"
+cores = helpers.getCores(helpers.params[CoreGroup])
 
 
 core_start_column = [0] * helpers.NUMCORE
@@ -72,7 +75,7 @@ print 'last request generated at ' + str(lastRequestGenTime)
 #initialize data dict
 datas = {}
 times = []
-for core  in ls_cores:
+for core  in cores:
 	datas[core] = {}
 	for trace in interestedTrace:
 		datas[core][trace] = []
@@ -95,14 +98,14 @@ with open(csvFile, 'rb') as csvfile:
 		if dataTime > lastRequestGenTime:
 			break
 		times.append(dataTime)
-		for core in ls_cores:
+		for core in cores:
 			for trace in interestedTrace:
 				data = float(row[core_start_column[core] + helpers.CDISP[trace] ])
 				datas[core][trace].append(data)
 
 print 'Plotting'
 
-for core in ls_cores:
+for core in cores:
 	for trace in interestedTrace:
 		plt.suptitle('Core' + str(core) + ' ' + trace)
 		plt.plot(times, datas[core][trace])
