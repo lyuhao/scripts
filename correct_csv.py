@@ -14,6 +14,14 @@ import shutil
 # corrects csv file produced by Intel Performance Monitor
 # Specifically, add one second to time where it is smaller than previous row,
 # and verify that the changed time is smaller than next row
+def convertToTimeStr(num):
+	assert num >=0 and num < 60
+	if num < 10:
+		retStr = '0' + str(newSecond)
+	else:
+		retStr = str(newSecond)
+	return retStr
+
 
 if len(sys.argv) < 2:
 	print "please provide csv file"
@@ -56,12 +64,18 @@ with open(csvFile, 'rb') as csvfile, tempFile:
 				digits = row[1].split(':')
 				seconds = digits[2].split('.')
 				newSecond = (int(seconds[0]) + 1) % 60
-				if newSecond < 10:
-					newSecStr = '0' + str(newSecond)
-				else:
-					newSecStr = str(newSecond)
+				if newSecond == '0':
+					newMinute = (int(digits[1]) + 1) % 60
+					newMinStr = convertToTimeStr(newMinute)
+					digits[1] = newMinStr
+					if newMinute == 0:
+						newHour = (int(digits[0]) + 1) % 24
+						newHourStr = convertToTimeStr(newHour)
+						digits[0] = newHourStr
+				newSecStr = convertToTimeStr(newSecond)
 				row[1] = digits[0] + ':' + digits[1] + ':' +newSecStr + '.' + seconds[1]
 				dataTimeCorrect = helpers.getCsvTime(row[0], row[1])
+				assert dataTimeCorrect > dTimes[-1]
 				# print "Changing to " + row[1] + ", corresponds to " + str(dataTimeCorrect) + ' ns'
 				#put in correction log
 				log.write('On line ' + str(lineN) + ':\n')
