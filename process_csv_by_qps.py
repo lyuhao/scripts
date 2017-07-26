@@ -12,5 +12,7 @@ for i in range (1,10):
 	trial = 'q'+qpsLevel+'k'+str(i)
 	csvPath = trial+'/'+trial+'.csv'
 	print 'processing ' + csvPath
-	subprocess.call(['./correct_csv.py', csvPath])
-	subprocess.call(['./see_csv_agg.py', csvPath])
+	if not subprocess.call(['./correct_csv.py', csvPath]) == 0:
+		exit(1)
+	if not subprocess.call(['./see_csv_agg.py', csvPath]) == 0:
+		exit(1)
