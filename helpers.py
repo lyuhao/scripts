@@ -3,6 +3,7 @@
 import datetime
 import pytz
 from dateutil import parser
+import math
 #useful constants
 CDISP = {   #dictionary for stats displacement for core
 	'EXEC' : 0,
@@ -89,4 +90,12 @@ def getCsvTime (date, time):
 	elapsed = (elapsed*1e3+ms)*1e6
 	return elapsed
 
-
+def get95th (aList):
+	if len(aList) == 0:
+		return -1
+	if len(aList) == 1:
+		return aList[0]
+	sortedList = sorted(aList)
+	percntileInterval = 100.0 /(float(len(sortedList)) - 1.0)
+	indexFor95th = int(math.ceil(95.0 / percntileInterval))
+	return sortedList[indexFor95th]
