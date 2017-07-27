@@ -112,12 +112,16 @@ with open(csvFile, 'rb') as csvfile:
 			dataRaw[core]['L3ACC'].append(cL3ACC)
 
 #remove mega thread
+lowestCoreIPC = 10
+metaThreadCore = -1
 for core in lsa_cores:
 	average_core_IPC = sum(dataRaw[core]['IPC'])/len(dataRaw[core]['IPC'])
-	if average_core_IPC < 1.0:
-		lsa_cores.remove(core)
-		del dataRaw[core]
-		break
+	if average_core_IPC < lowestCoreIPC:
+		lowestCoreIPC = average_core_IPC
+		metaThreadCore = core
+lsa_cores.remove(metaThreadCore)
+del dataRaw[metaThreadCore]
+
 
 #compute aggregate data and also write to a file
 print "Processing data and writing to file"
@@ -132,16 +136,19 @@ for i in range(0,len(eTime)):
 	aIPCls.append(server_IPC_average)
 	sL3MISSls.append(server_L3MISS_sum)
 
-	batch_L3MISS_sum = 0
-	batch_L3ACC_sum = 0
-	for core in ba_cores:
-		batch_L3MISS_sum += dataRaw[core]['L3MISS'][i]
-		batch_L3ACC_sum += dataRaw[core]['L3ACC'][i]
-	sL3MISSb.append(batch_L3MISS_sum)
-	sL3ACCb.append(batch_L3ACC_sum)
+	if len(ba_cores) > 0:
+		batch_L3MISS_sum = 0
+		batch_L3ACC_sum = 0
+		for core in ba_cores:
+			batch_L3MISS_sum += dataRaw[core]['L3MISS'][i]
+			batch_L3ACC_sum += dataRaw[core]['L3ACC'][i]
+		sL3MISSb.append(batch_L3MISS_sum)
+		sL3ACCb.append(batch_L3ACC_sum)
 
-	outFile.write(str(eTime[i]) + ' ' + str(server_IPC_average) + ' ' + str(server_L3MISS_sum) + ' ')
-	outFile.write(str(batch_L3MISS_sum) + ' ' + str(batch_L3ACC_sum) + '\n')
+	outFile.write(str(eTime[i]) + ' ' + str(server_IPC_average) + ' ' + str(server_L3MISS_sum))
+	if len(ba_cores) > 0:
+		outFile.write(' ' + str(batch_L3MISS_sum) + ' ' + str(batch_L3ACC_sum))
+	outFile.write('\n')
 outFile.close()
 
 
@@ -158,12 +165,13 @@ plt.plot(eTime, sL3MISSls)
 plt.savefig(trialFolder + '/L3Missls_vs_time.jpg' )
 plt.close()
 
-plt.suptitle('Batch L3Miss sum vs Time')
-plt.plot(eTime, sL3MISSb)
-plt.savefig(trialFolder + '/L3Missb_vs_time.jpg' )
-plt.close()
+if len(ba_cores) > 0:
+	plt.suptitle('Batch L3Miss sum vs Time')
+	plt.plot(eTime, sL3MISSb)
+	plt.savefig(trialFolder + '/L3Missb_vs_time.jpg' )
+	plt.close()
 
-plt.suptitle('Batch L3Access sum vs Time')
-plt.plot(eTime, sL3ACCb)
-plt.savefig(trialFolder + '/L3Accessb_vs_time.jpg' )
-plt.close()
+	plt.suptitle('Batch L3Access sum vs Time')
+	plt.plot(eTime, sL3ACCb)
+	plt.savefig(trialFolder + '/L3Accessb_vs_time.jpg' )
+	plt.close()

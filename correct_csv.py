@@ -17,9 +17,9 @@ import shutil
 def convertToTimeStr(num):
 	assert num >=0 and num < 60
 	if num < 10:
-		retStr = '0' + str(newSecond)
+		retStr = '0' + str(num)
 	else:
-		retStr = str(newSecond)
+		retStr = str(num)
 	return retStr
 
 
@@ -38,7 +38,7 @@ lineN = 0
 warmupLines = 2
 dTimes = []
 print "Attempting to correct CSV File"
-log = open(logFile, 'w')
+log = open(logFile, 'a')
 
 previousLineChanged = False
 with open(csvFile, 'rb') as csvfile, tempFile:
@@ -64,9 +64,11 @@ with open(csvFile, 'rb') as csvfile, tempFile:
 				digits = row[1].split(':')
 				seconds = digits[2].split('.')
 				newSecond = (int(seconds[0]) + 1) % 60
-				if newSecond == '0':
+				if newSecond == 0:
 					newMinute = (int(digits[1]) + 1) % 60
+					# print "newMinute is " + str(newMinute)
 					newMinStr = convertToTimeStr(newMinute)
+					# print "newMinStr is " + newMinStr
 					digits[1] = newMinStr
 					if newMinute == 0:
 						newHour = (int(digits[0]) + 1) % 24
@@ -75,11 +77,12 @@ with open(csvFile, 'rb') as csvfile, tempFile:
 				newSecStr = convertToTimeStr(newSecond)
 				row[1] = digits[0] + ':' + digits[1] + ':' +newSecStr + '.' + seconds[1]
 				dataTimeCorrect = helpers.getCsvTime(row[0], row[1])
+				log.write('On line ' + str(lineN) + ':\n')
+				log.write('\t changing time from ' + originalTime + ' to ' + row[1] +'\n')
 				assert dataTimeCorrect > dTimes[-1]
 				# print "Changing to " + row[1] + ", corresponds to " + str(dataTimeCorrect) + ' ns'
 				#put in correction log
-				log.write('On line ' + str(lineN) + ':\n')
-				log.write('\t changed time from ' + originalTime + ' to ' + row[1] +'\n')
+				
 				dataTime = dataTimeCorrect
 				previousLineChanged = True
 		dTimes.append(dataTime)
