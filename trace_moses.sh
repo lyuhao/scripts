@@ -1,8 +1,7 @@
-#! /bin/bash
+#!/bin/bash
 
 #setup
-ONLINE_HOME=/home/ds318/gitRepo/tailbench/moses
-PER_COUNTER_HOME=/home/ds318/bash_scripts/IntelPerformanceCounterMonitorV2.8
+source ./paths.sh
 
 #check
 if ! [ -d ${ONLINE_HOME} ]
@@ -22,7 +21,7 @@ if [ "$#" -ne 5 ]
 then
 	echo "To be used on server to deploy LC Applicatoin"
 	echo "Please call the with the following format:"
-	echo "./run.sh [QPS SERVERCORES CLIENTCORES FILENAME MAXREQS]"
+	echo "${BASH_SOURCE[0]} [QPS SERVERCORES CLIENTCORES FILENAME MAXREQS]"
 	exit 1
 fi
 

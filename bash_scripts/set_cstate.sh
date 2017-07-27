@@ -1,4 +1,11 @@
 #!/bin/bash
 
-taskset -c $1 ./set_cstate $2 &
+if [ $# -ne 2 ]
+then
+	echo "Usage: ${BASH_SOURCE[0]} [core latency]"
+	exit 1
+fi
+CORE=$1
+LATENCY=$2
+taskset -c ${CORE} ./set_cstate ${LATENCY} &
 echo $! > setcstate.pid
