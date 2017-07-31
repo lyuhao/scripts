@@ -6,8 +6,9 @@ import os.path
 AGG_OFFSET = {
 	'aIPCls' : 1,
 	'sL3MISSls' : 2,
-	'sL3MISSb' : 3,
-	'sL3ACCb' : 4,
+	'hiL3CLKls' : 3,
+	'sL3MISSb' : 4,
+	'sL3ACCb' : 5,
 }
 
 if len(sys.argv) < 5:

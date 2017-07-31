@@ -3,18 +3,7 @@
 import matplotlib.pyplot as plt
 import sys
 import os.path
-AGG_OFFSET = {
-	'aIPCls' : 1,
-	'sL3MISSls' : 2,
-	'hiL3CLKls' : 3,
-	'sL3MISSb' : 4,
-	'sL3ACCb' : 5,
-}
-
-BIN_OFFSET = {
-	'latency' : 4,
-	'service' : 3
-}
+import OFFSET
 
 if len(sys.argv) < 4:
 	print "plot_latency_against.py [FOLDER XVar YVar]"
@@ -30,12 +19,12 @@ if not os.path.isdir(trial):
 	print "Folder " + trial + " does not exist"
 	exit(1)
 
-if xvar not in AGG_OFFSET:
+if xvar not in OFFSET.AGG:
 	print "Canno identify parameter " + xvar
 	print "please use one of the following: aIPCls sL3MISSls sL3MISSb SL3ACCb hiL3CLKls"
 	exit(1)
 
-if yvar not in BIN_OFFSET:
+if yvar not in OFFSET.BIN:
 	print "Canno identify parameter " + xvar
 	print "please use one of the following: latency service"
 	exit(1)
@@ -69,7 +58,7 @@ while True:
 		firstReqGenTime = int(times[1])
 	elapsedTime = int(times[1]) + int(times[4])/2 - firstReqGenTime
 	assert elapsedTime > 0
-	yvarData = float(times[BIN_OFFSET[yvar]])
+	yvarData = float(times[OFFSET.BIN[yvar]])
 	yvarList.append(yvarData)
 	# latency = int(times[4])
 	# ltcList.append(latency)
@@ -83,7 +72,7 @@ while True:
 			aggNextLine = aggLine
 		else:
 			aggNextLine = aggLines[aggLineNum + 1].strip().split()
-		xVarData = float(aggLine[AGG_OFFSET[xvar]])
+		xVarData = float(aggLine[OFFSET.AGG[xvar]])
 		elapsedTime0 = float(aggLine[0])
 		elapsedTime1 = float(aggNextLine[0])
 		try:
