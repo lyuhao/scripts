@@ -1,9 +1,7 @@
 #! /bin/bash
 
 #setup
-SPARK_HOME=/home/ds318/gitRepo/scripts/spark_scripts
-ONLINE_HOME=/home/ds318/gitRepo/tailbench/moses
-PER_COUNTER_HOME=/home/ds318/bash_scripts/IntelPerformanceCounterMonitorV2.8
+source ./paths.sh
 
 #check
 
