@@ -6,8 +6,9 @@ import os.path
 AGG_OFFSET = {
 	'aIPCls' : 1,
 	'sL3MISSls' : 2,
-	'sL3MISSb' : 3,
-	'sL3ACCb' : 4,
+	'hiL3CLKls' : 3,
+	'sL3MISSb' : 4,
+	'sL3ACCb' : 5,
 }
 
 BIN_OFFSET = {
@@ -20,6 +21,8 @@ if len(sys.argv) < 4:
 	exit(1)
 
 trial = sys.argv[1]
+if trial.endswith('/'):
+	trial = trial[ : -1]
 xvar = sys.argv[2]
 yvar = sys.argv[3]
 
@@ -29,7 +32,7 @@ if not os.path.isdir(trial):
 
 if xvar not in AGG_OFFSET:
 	print "Canno identify parameter " + xvar
-	print "please use one of the following: aIPCls sL3MISSls sL3MISSb SL3ACCb"
+	print "please use one of the following: aIPCls sL3MISSls sL3MISSb SL3ACCb hiL3CLKls"
 	exit(1)
 
 if yvar not in BIN_OFFSET:
