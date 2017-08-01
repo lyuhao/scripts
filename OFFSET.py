@@ -7,6 +7,9 @@ AGG = {
 }
 
 BIN = {
+	'id' : 0,
+	'generation' : 1,
+	'queue' : 2,
 	'latency' : 4,
 	'service' : 3
 }

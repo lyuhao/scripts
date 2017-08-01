@@ -68,16 +68,16 @@ def getCores (corestr):
 			exit(1)
 	return cores
 
-def getStartTime (line): #return nanoseconds
-	line = line.strip()
-	timeString = line[-28:]
-	#print timeString
-	naive = parser.parse(timeString)
-	local_dt = LOCALTZONE.localize(naive, is_dst=True)
-	utc_time = local_dt.astimezone(pytz.utc).replace(tzinfo=None)
-	elapsed = (utc_time-EPOCH).total_seconds()
-	# print elapsed
-	return elapsed * 1e9
+# def getStartTime (line): #return nanoseconds
+# 	line = line.strip()
+# 	timeString = line[-28:]
+# 	#print timeString
+# 	naive = parser.parse(timeString)
+# 	local_dt = LOCALTZONE.localize(naive, is_dst=True)
+# 	utc_time = local_dt.astimezone(pytz.utc).replace(tzinfo=None)
+# 	elapsed = (utc_time-EPOCH).total_seconds()
+# 	# print elapsed
+# 	return elapsed * 1e9
 
 def getCsvTime (date, time):
 	sTime = time.split('.')
@@ -99,3 +99,20 @@ def get95th (aList):
 	percntileInterval = 100.0 /(float(len(sortedList)) - 1.0)
 	indexFor95th = int(math.ceil(95.0 / percntileInterval))
 	return sortedList[indexFor95th]
+
+def getSparkTime(aFile): # returns system time when spark started in nanoseconds as float
+	with open(aFile, 'r') as f:
+		while True:
+			line = f.readline()
+			if line == '':
+				sparkTime = -1
+				break
+			words = line.strip().split()
+			if 'spark' not in words:
+				continue
+			sparkTime = float(words[-1])*1e9
+			break
+	return sparkTime
+def pErr(aString, errNum): #short for print error
+	print 'ERROR: ' + aString
+	exit(int(errNum))
