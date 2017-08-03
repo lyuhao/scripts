@@ -3,17 +3,8 @@
 import matplotlib.pyplot as plt
 import sys
 import os.path
-AGG_OFFSET = {
-	'aIPCls' : 1,
-	'sL3MISSls' : 2,
-	'sL3MISSb' : 3,
-	'sL3ACCb' : 4,
-}
+import OFFSET
 
-BIN_OFFSET = {
-	'latency' : 4,
-	'service' : 3
-}
 
 if len(sys.argv) < 4:
 	print "plot_latency_against.py [qpsLevel XVar YVar]"
@@ -23,12 +14,12 @@ qpsLevel = sys.argv[1]
 xvar = sys.argv[2]
 yvar = sys.argv[3]
 
-if xvar not in AGG_OFFSET:
+if xvar not in OFFSET.AGG:
 	print "Canno identify parameter " + xvar
-	print "please use one of the following: aIPCls sL3MISSls sL3MISSb SL3ACCb"
+	print "please use one of the following: aIPCls sL3MISSls hiL3CLKls sL3MISSb sL3ACCb "
 	exit(1)
 
-if yvar not in BIN_OFFSET:
+if yvar not in OFFSET.BIN:
 	print "Canno identify parameter " + xvar
 	print "please use one of the following: latency service"
 	exit(1)
@@ -70,7 +61,7 @@ for nCores in range(1,10):
 			firstReqGenTime = int(times[1])
 		elapsedTime = int(times[1]) + int(times[4])/2 - firstReqGenTime
 		assert elapsedTime > 0
-		yvarData = float(times[BIN_OFFSET[yvar]])
+		yvarData = float(times[OFFSET.BIN[yvar]])
 		yvarList.append(yvarData)
 		# latency = int(times[4])
 		# ltcList.append(latency)
@@ -84,7 +75,7 @@ for nCores in range(1,10):
 				aggNextLine = aggLine
 			else:
 				aggNextLine = aggLines[aggLineNum + 1].strip().split()
-			xVarData = float(aggLine[AGG_OFFSET[xvar]])
+			xVarData = float(aggLine[OFFSET.AGG[xvar]])
 			elapsedTime0 = float(aggLine[0])
 			elapsedTime1 = float(aggNextLine[0])
 			try:

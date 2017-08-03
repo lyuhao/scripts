@@ -74,6 +74,12 @@ with open(csvFile, 'rb') as csvfile, tempFile:
 						newHour = (int(digits[0]) + 1) % 24
 						newHourStr = convertToTimeStr(newHour)
 						digits[0] = newHourStr
+						if newHour == 0:
+							dateCol = row[0]
+							YYYY_MM_DD = dateCol.strip().split('-')
+							newDD = int(YYYY_MM_DD[2]) + 1
+							newDDStr = convertToTimeStr(newDD)
+							row[0] = YYYY_MM_DD[0] + '-' + YYYY_MM_DD[1] + '-' + newDDStr
 				newSecStr = convertToTimeStr(newSecond)
 				row[1] = digits[0] + ':' + digits[1] + ':' +newSecStr + '.' + seconds[1]
 				dataTimeCorrect = helpers.getCsvTime(row[0], row[1])

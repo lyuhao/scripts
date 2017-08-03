@@ -51,6 +51,8 @@ for i in range(1,helpers.NUMCORE):
 eTime = [] #elapsed time since moses finished warm up 
 aIPCls = [] #average IPC for lsa
 sL3MISSls = [] #sum of L3MISS for lsa
+hiL3CLKls = [] #highest reading of L3CLK for lsa
+
 if len(ba_cores) > 0:
 	sL3MISSb = [] #sum of L3MISS for ba
 	sL3ACCb = [] #sum of L3 Access for ba
@@ -67,6 +69,7 @@ for core in lsa_cores:
 	dataRaw[core] = {}
 	dataRaw[core]['IPC'] = []
 	dataRaw[core]['L3MISS'] = []
+	dataRaw[core]['L3CLK'] = []
 for core in ba_cores:
 	dataRaw[core] = {}
 	dataRaw[core]['L3MISS'] = []
@@ -102,8 +105,10 @@ with open(csvFile, 'rb') as csvfile:
 		for core in lsa_cores:
 			cIPC = float(row[core_start_column[core] + helpers.CDISP['IPC'] ])
 			cL3MISS = float(row[core_start_column[core] + helpers.CDISP['L3MISS'] ])
+			cL3CLK = float(row[core_start_column[core] + helpers.CDISP['L3CLK'] ])
 			dataRaw[core]['IPC'].append(cIPC)
 			dataRaw[core]['L3MISS'].append(cL3MISS)
+			dataRaw[core]['L3CLK'].append(cL3CLK)
 		for core in ba_cores:
 			cL3MISS = float(row[core_start_column[core] + helpers.CDISP['L3MISS'] ])
 			cL3HIT = float(row[core_start_column[core] + helpers.CDISP['L3HIT'] ])
@@ -129,12 +134,16 @@ outFile = open(noSuffix + '.agg','w')
 for i in range(0,len(eTime)):
 	server_IPC_sum = 0
 	server_L3MISS_sum = 0
+	server_L3CLK_high = 0
 	for core in lsa_cores:
 		server_IPC_sum += dataRaw[core]['IPC'][i]
 		server_L3MISS_sum += dataRaw[core]['L3MISS'][i]
+		if dataRaw[core]['L3CLK'][i] > server_L3CLK_high:
+			server_L3CLK_high = dataRaw[core]['L3CLK'][i]
 	server_IPC_average = server_IPC_sum / len(lsa_cores)
 	aIPCls.append(server_IPC_average)
 	sL3MISSls.append(server_L3MISS_sum)
+	hiL3CLKls.append(server_L3CLK_high)
 
 	if len(ba_cores) > 0:
 		batch_L3MISS_sum = 0
@@ -145,7 +154,7 @@ for i in range(0,len(eTime)):
 		sL3MISSb.append(batch_L3MISS_sum)
 		sL3ACCb.append(batch_L3ACC_sum)
 
-	outFile.write(str(eTime[i]) + ' ' + str(server_IPC_average) + ' ' + str(server_L3MISS_sum))
+	outFile.write(str(eTime[i]) + ' ' + str(server_IPC_average) + ' ' + str(server_L3MISS_sum) + ' ' + str(server_L3CLK_high))
 	if len(ba_cores) > 0:
 		outFile.write(' ' + str(batch_L3MISS_sum) + ' ' + str(batch_L3ACC_sum))
 	outFile.write('\n')
@@ -163,6 +172,11 @@ plt.close()
 plt.suptitle('Server L3Miss sum vs Time')
 plt.plot(eTime, sL3MISSls)
 plt.savefig(trialFolder + '/L3Missls_vs_time.jpg' )
+plt.close()
+
+plt.suptitle('Server core highest L3CLK vs Time')
+plt.plot(eTime, hiL3CLKls)
+plt.savefig(trialFolder + '/L3CLKls_vs_time.jpg' )
 plt.close()
 
 if len(ba_cores) > 0:
