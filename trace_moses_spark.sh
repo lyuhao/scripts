@@ -63,7 +63,7 @@ sudo cpupower frequency-set -g performance
 sleep 5
 
 #start performance counter
-sudo taskset -c ${PCMCORES} $PER_COUNTER_HOME/pcm.x 0.1 -csv=${FILENAME}.csv &
+sudo taskset -c ${PCMCORES} $PER_COUNTER_HOME/pcm.x 0.05 -csv=${FILENAME}.csv &
 echo $! > pcm.pid
 sleep 5
 

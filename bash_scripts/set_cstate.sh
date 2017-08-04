@@ -7,5 +7,6 @@ then
 fi
 CORE=$1
 LATENCY=$2
-taskset -c ${CORE} ./set_cstate ${LATENCY} &
-echo $! > setcstate.pid
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+taskset -c ${CORE} ${DIR}/set_cstate ${LATENCY} &
+echo $! > ${DIR}/setcstate.pid

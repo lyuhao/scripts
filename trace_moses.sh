@@ -63,7 +63,7 @@ sudo cpupower frequency-set -g performance
 sleep 5
 
 #start performance counter
-sudo taskset -c ${PCMCORES} $PER_COUNTER_HOME/pcm.x 0.1 -csv=${FILENAME}.csv &
+sudo taskset -c ${PCMCORES} $PER_COUNTER_HOME/pcm.x 0.05 -csv=${FILENAME}.csv &
 echo $! > pcm.pid
 sleep 5
 
@@ -76,7 +76,7 @@ mv ${FILENAME}.time ${FILENAME}/.
 
 if [ ${MAXREQS} -eq 0 ]
 then
-	sleep 17m
+	sleep 20m
 else
 	wait $(cat onlineTool.pid)
 fi
@@ -102,4 +102,7 @@ while ! [ -e ${FILENAME}.csv ]; do
 done
 mv ${FILENAME}.csv ${FILENAME}/.
 
-
+while ! [ -e test.out ]; do
+        sleep 1
+done
+mv test.out ${FILENAME}/test.out
