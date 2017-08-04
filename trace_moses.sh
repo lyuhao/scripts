@@ -76,7 +76,7 @@ mv ${FILENAME}.time ${FILENAME}/.
 
 if [ ${MAXREQS} -eq 0 ]
 then
-	sleep 20m
+	sleep 6m
 else
 	wait $(cat onlineTool.pid)
 fi

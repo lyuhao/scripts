@@ -15,7 +15,7 @@ if '-s' in sys.argv:
 trialFolder = str(sys.argv[1])
 if not os.path.isdir(trialFolder):
 	helpers.pErr('Folder' + trialFolder +' does not exist', 1)
-qpsStr = trialFolder[1:-2] #trialFolder in format qxxx(x)kx
+qpsStr = trialFolder[1:-4] #trialFolder in format qxxx(x)fxxx
 
 baseFolder = 'q'+qpsStr+'base'
 if not os.path.isdir(baseFolder):
