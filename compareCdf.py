@@ -57,6 +57,6 @@ ax.set_xlabel('time (ms)')
 ax.set_ylabel('percentile')
 plt.legend()
 #plt.show()
-fig.savefig(dirName+'/percentile_comparison.jpg')
+fig.savefig(dirName+'/percentile_comparison.jpg',dpi=1200)
 plt.close(fig)
 
