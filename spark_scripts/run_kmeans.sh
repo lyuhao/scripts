@@ -8,9 +8,8 @@ LCSERVER=$1
 
 
 echo "-----------starting kmeans---------------"
-echo "LCSERVER=${LCSERVER}
+echo "LCSERVER=${LCSERVER}"
 
-"
 /home/ds318/gitRepo/spark/bin/spark-submit --num-executors 20 --jars /home/ds318/gitRepo/spark/examples/target/scala-2.11/jars/scopt_2.11-3.3.0.jar \
 --class org.apache.spark.examples.mllib.DenseKMeans --master spark://$(hostname):7077 \
 --deploy-mode client \
