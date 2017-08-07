@@ -18,7 +18,7 @@ with file:
 		start_time = float(times[2])
 		service_time_list.append(service_time/1000000)
 		latency_time_list.append(latency_time/1000000)
-		start_time_list.append(start_time/1000000000)
+		start_time_list.append(start_time/1000000)
 
 ##		print service_time/1000000,' ',latency_time/1000000 
 	
@@ -54,6 +54,7 @@ yvals_latency_list = list(yvals_latency)
 
 index_95 = 0 
 index_99 = 0
+
 for i in range(0,len(yvals_service_list)):
 #	print str(sorted_service_time_list)+' '+str(yvals_service_list)+'\n'
 	cdf_file.write(str(sorted_latency_time_list[i])+' '+str(yvals_latency_list[i])+'\n') 
@@ -65,3 +66,17 @@ for i in range(0,len(yvals_service_list)):
 
 print '95th-percentile: ', sorted_latency_time_list[index_95]
 print '99th-percentile: ', sorted_latency_time_list[index_99]
+
+
+plt.figure(1)
+plt.subplot(211)
+plt.plot(start_time_list,service_time_list,'b')
+plt.xlabel('GenTime')
+plt.ylabel('Service Time')
+
+plt.subplot(212)
+plt.plot(start_time_list,latency_time_list,'r')
+plt.xlabel('GenTime')
+plt.ylabel('latency time')
+
+plt.savefig('linear_10cores.png')
