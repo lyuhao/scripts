@@ -15,11 +15,12 @@ import helpers
 
 interestedTrace = ['EXEC', 'IPC', 'FREQ', 'AFREQ', 'L3MISS', 'L2MISS', 'L3HIT','L2HIT', 'L3CLK', 'L2CLK']
 
-if len(sys.argv) < 2:
-	print "please provide csv file"
-	exit(1)
+if len(sys.argv) < 3:
+	helpers.pErr('Format: ' + sys.argv[0] + ' [ csvFile coreGroup ]',1)
 
 csvFile = str(sys.argv[1])
+CoreGroup = str(sys.argv[2])
+
 trialName = ''
 
 if csvFile.endswith('.csv'):
@@ -40,12 +41,8 @@ if not os.path.isfile(setupFile):
 	exit(1)
 
 helpers.readSetup(setupFile)
-
-if len(sys.argv) == 3:
-	CoreGroup = str(sys.argv[2])
-else:
-	CoreGroup = "SERVERCORES"
 cores = helpers.getCores(helpers.params[CoreGroup])
+
 
 
 core_start_column = [0] * helpers.NUMCORE
@@ -54,23 +51,31 @@ core_start_column[0] = helpers.getColNum("CF")
 for i in range(1,helpers.NUMCORE):
 	core_start_column[i] = core_start_column[i-1] + helpers.COL_PER_CORE
 
-#print core_start_column
+startTime = 0
+endTime = -1
 
-# mosesStartingTime = -1
-# with open(trialName+'.time', 'r') as f:
-# 	line = f.readline()
-# 	print line
-# 	mosesStartingTime = helpers.getStartTime(line)
-# print 'moses started at ' + str(mosesStartingTime)
 
-firstRequestGenTime = -1
-lastRequestGenTime = -1
-with open(trialName+'.bin', 'r') as f:
-	lines = f.readlines()
-	firstRequestGenTime = float((lines[0].split())[1])
-	lastRequestGenTime = float((lines[-1].split())[1])
-print 'first request generated at' + str(firstRequestGenTime)
-print 'last request generated at ' + str(lastRequestGenTime)
+#If bin file exists
+if os.path.isfile(trialName+'.bin'):
+	firstRequestGenTime = -1
+	lastRequestGenTime = -1
+	with open(trialName+'.bin', 'r') as f:
+		lines = f.readlines()
+		firstRequestGenTime = float((lines[0].split())[1])
+		lastRequestGenTime = float((lines[-1].split())[1])
+	print 'first request generated at' + str(firstRequestGenTime)
+	print 'last request generated at ' + str(lastRequestGenTime)
+	startTime = firstRequestGenTime
+	endTime = lastRequestGenTime
+else:
+	timeFile = trialName + '.time'
+	if not os.path.isfile(timeFile):
+		helpers.pErr('File ' + timeFile + ' does not exist' , 1)
+	#find spark starting time
+	sparkStartingTime = helpers.getSparkTime(timeFile)
+	if not sparkStartingTime > 0:
+		helpers.pErr('Spark starting time not recorded in file ' + timeFile, 2)
+	startTime = sparkStartingTime
 
 #initialize data dict
 datas = {}
@@ -93,11 +98,12 @@ with open(csvFile, 'rb') as csvfile:
 
 		dataTime = helpers.getCsvTime(row[0], row[1])
 		# print dataTime
-		if dataTime < firstRequestGenTime:
+		if dataTime < startTime:
 			continue
-		if dataTime > lastRequestGenTime:
+		if dataTime > endTime and endTime > startTime:
 			break
-		times.append(dataTime)
+		elapsedTime = dataTime - startTime
+		times.append(elapsedTime)
 		for core in cores:
 			for trace in interestedTrace:
 				data = float(row[core_start_column[core] + helpers.CDISP[trace] ])
@@ -106,8 +112,9 @@ with open(csvFile, 'rb') as csvfile:
 print 'Plotting'
 
 for core in cores:
+	print 'Plotting core ' + str(core)
 	for trace in interestedTrace:
 		plt.suptitle('Core' + str(core) + ' ' + trace)
 		plt.plot(times, datas[core][trace])
-		plt.savefig(trialName+ '_core' + str(core) + '_' + trace + '.jpg' )
+		plt.savefig(trialName+ '_core' + str(core) + '_' + trace + '.jpg', dpi=1200 )
 		plt.close()
