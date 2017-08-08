@@ -15,10 +15,10 @@ with file:
 		times = line.split(' ')
 		service_time = float(times[1])
 		latency_time = float(times[0])+float(times[1])
-		start_time = float(times[2])
+		#start_time = float(times[2])
 		service_time_list.append(service_time/1000000)
 		latency_time_list.append(latency_time/1000000)
-		start_time_list.append(start_time/1000000)
+		#start_time_list.append(start_time/1000000)
 
 ##		print service_time/1000000,' ',latency_time/1000000 
 	
@@ -67,16 +67,17 @@ for i in range(0,len(yvals_service_list)):
 print '95th-percentile: ', sorted_latency_time_list[index_95]
 print '99th-percentile: ', sorted_latency_time_list[index_99]
 
-
+start_time_list = range(0,len(service_time_list));
 plt.figure(1)
 plt.subplot(211)
 plt.plot(start_time_list,service_time_list,'b')
 plt.xlabel('GenTime')
 plt.ylabel('Service Time')
+plt.ylim([0,20])
 
 plt.subplot(212)
 plt.plot(start_time_list,latency_time_list,'r')
 plt.xlabel('GenTime')
 plt.ylabel('latency time')
 
-plt.savefig('linear_10cores.png')
+plt.show()

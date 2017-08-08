@@ -36,15 +36,16 @@ def read_one_trace(filename):
 		core_start_column[i] = core_start_column[i-1] + 16
 
 
-	L3Miss_displacment = 4
+	L3Miss_displacment = 0
 	L3Hit_displacement = 6
 
 	ls_cores = [12,13]
-	be_cores = range(12,20)+range(36,44)
+	be_cores = range(14,24)+range(36,48)
 
 	i = 0
 	for Row in csv_file:
 		row = Row.split(';')
+		#print row
 
 		if i < 2:
 			i = i + 1
@@ -53,13 +54,18 @@ def read_one_trace(filename):
 		i = i + 1
 		L3Miss_sum = 0
 		L3Hit_sum = 0
-
+		if row[0] == '181':
+			continue
 		for be_core in be_cores:
 			start_column = core_start_column[be_core]
 			L3Miss_location = start_column+L3Miss_displacment
 			L3Hit_location = start_column+L3Hit_displacement
-			L3Miss = float(row[L3Miss_location])
-			L3Hit = float(row[L3Hit_location])
+			try:
+				L3Miss = float(row[L3Miss_location])
+			except ValueError:
+				L3Miss = 0
+			#L3Hit = float(row[L3Hit_location])
+			L3Hit = 0.99
 
 			if(L3Hit == 1):
 				L3Miss_modified = 0
