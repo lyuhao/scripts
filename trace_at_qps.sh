@@ -2,15 +2,16 @@
 
 
 #parameter parsing
-if [ "$#" -ne 2 ]
+if [ "$#" -ne 3 ]
 then
         echo "Please call the with the following format:"
-        echo "./loop_run.sh [QPS NUMCORESTART]"
+        echo "${BASH_SOURCE[0]} [QPS NUMCORESTART SPARKAPP]"
         exit 1
 fi
 #arguments
 QPS=$1
 NUMCORESTART=$2
+SPARKAPP=$3
 STARTINGCORE0=12
 STARTINGCORE1=36
 
@@ -29,7 +30,7 @@ do
 	taskset -c ${SPARKCORES} \
 		/home/ds318/gitRepo/spark/sbin/start-slave.sh clipper03.egr.duke.edu:7077
 	sleep 10
-	source ./trace_moses_spark.sh  ${QPS} 21-23 9-11 clipper03 kmeans \
+	source ./trace_moses_spark_Cores.sh  ${QPS} 21-23 9-11 clipper03 ${SPARKAPP} \
 		q${QPS}k${numCore} ${SPARKCORES}
 	sleep 5
 	source ./kill_spark_worker.sh
