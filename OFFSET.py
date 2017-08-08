@@ -10,6 +10,8 @@ BIN = {
 	'id' : 0,
 	'generation' : 1,
 	'queue' : 2,
+	'service' : 3,
 	'latency' : 4,
-	'service' : 3
+	'svcStart' : 5
+	
 }
