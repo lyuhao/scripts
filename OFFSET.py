@@ -5,6 +5,8 @@ AGG = {
 	'hiL3CLKls' : 3,
 	'sL3MISSb' : 4,
 	'sL3ACCb' : 5,
+	'skt1READ' : 6,
+	'skt1WRITE' : 7
 }
 
 BIN = {

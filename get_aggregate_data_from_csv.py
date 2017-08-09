@@ -10,8 +10,15 @@ import helpers
 
 
 
-#creates plot that shows aggregated Cpu parameters
+#creates plot that shows aggregated Cpu and socket parameters
 #also creates file suitable for future comparison
+#argumets:  csvfile
+
+toPlot = False
+if '-p' in sys.argv:
+	toPlot = True
+	sys.argv.remove('-p')
+
 
 if len(sys.argv) < 2:
 	print "please provide csv file"
@@ -50,6 +57,8 @@ if 'SPARKCORES' in helpers.params:
 
 core_start_column = [0] * helpers.NUMCORE
 core_start_column[0] = helpers.getColNum("CF")
+socket1_read_column = helpers.getColNum('BG')
+socket1_write_column = helpers.getColNum('BH')
 
 for i in range(1,helpers.NUMCORE):
 	core_start_column[i] = core_start_column[i-1] + helpers.COL_PER_CORE
@@ -63,6 +72,11 @@ if len(ba_cores) > 0:
 	sL3MISSb = [] #sum of L3MISS for batch
 	sL3ACCb = [] #sum of L3 Access for batch
 
+skt1WRITE = []
+skt1READ = []
+
+
+#get first request generation time from bin file
 with open(noSuffix+'.bin', 'r') as f:
 	lines = f.readlines()
 	firstRequestGenTime = float((lines[0].split())[1])
@@ -112,6 +126,10 @@ with open(csvFile, 'rb') as csvfile:
 				print 'is translated to ' + str(elapsedTime) +', where as prvious one is ' + str(eTime[-1])
 				exit(1)
 		eTime.append(elapsedTime)
+		socket1READ = float(row[socket1_read_column])
+		socket1WRITE = float(row[socket1_write_column])
+		skt1READ.append(socket1READ)
+		skt1WRITE.append(socket1WRITE)
 		for core in lsa_cores:
 			cIPC = float(row[core_start_column[core] + helpers.CDISP['IPC'] ])
 			cL3MISS = float(row[core_start_column[core] + helpers.CDISP['L3MISS'] ])
@@ -167,35 +185,49 @@ for i in range(0,len(eTime)):
 	outFile.write(str(eTime[i]) + ' ' + str(server_IPC_average) + ' ' + str(server_L3MISS_sum) + ' ' + str(server_L3CLK_high))
 	if len(ba_cores) > 0:
 		outFile.write(' ' + str(batch_L3MISS_sum) + ' ' + str(batch_L3ACC_sum))
+	else:
+		outFile.write(' ' + str(-1) + ' ' + str(-1) ) #place holder
+	outFile.write(' ' + str(skt1READ[i]) + ' ' + str(skt1WRITE[i]))
 	outFile.write('\n')
 outFile.close()
 
 
 trialFolder = helpers.getDir(csvFile)
 
-print 'Plotting'
-plt.suptitle('Server Average IPC vs Time')
-plt.plot(eTime, aIPCls)
-plt.savefig(trialFolder + 'aIPC_vs_time.jpg' )
-plt.close()
-
-plt.suptitle('Server L3Miss sum vs Time')
-plt.plot(eTime, sL3MISSls)
-plt.savefig(trialFolder + 'L3Missls_vs_time.jpg' )
-plt.close()
-
-plt.suptitle('Server core highest L3CLK vs Time')
-plt.plot(eTime, hiL3CLKls)
-plt.savefig(trialFolder + 'L3CLKls_vs_time.jpg' )
-plt.close()
-
-if len(ba_cores) > 0:
-	plt.suptitle('Batch L3Miss sum vs Time')
-	plt.plot(eTime, sL3MISSb)
-	plt.savefig(trialFolder + 'L3Missb_vs_time.jpg' )
+if toPlot:
+	print 'Plotting aggregate data vs time'
+	plt.suptitle('Server Average IPC vs Time')
+	plt.plot(eTime, aIPCls)
+	plt.savefig(trialFolder + 'aIPC_vs_time.jpg', dpi=1200 )
 	plt.close()
 
-	plt.suptitle('Batch L3Access sum vs Time')
-	plt.plot(eTime, sL3ACCb)
-	plt.savefig(trialFolder + 'L3Accessb_vs_time.jpg' )
+	plt.suptitle('Server L3Miss sum vs Time')
+	plt.plot(eTime, sL3MISSls)
+	plt.savefig(trialFolder + 'L3Missls_vs_time.jpg', dpi=1200 )
+	plt.close()
+
+	plt.suptitle('Server core highest L3CLK vs Time')
+	plt.plot(eTime, hiL3CLKls)
+	plt.savefig(trialFolder + 'L3CLKls_vs_time.jpg', dpi=1200 )
+	plt.close()
+
+	if len(ba_cores) > 0:
+		plt.suptitle('Batch L3Miss sum vs Time')
+		plt.plot(eTime, sL3MISSb)
+		plt.savefig(trialFolder + 'L3Missb_vs_time.jpg',dpi=1200 )
+		plt.close()
+
+		plt.suptitle('Batch L3Access sum vs Time')
+		plt.plot(eTime, sL3ACCb)
+		plt.savefig(trialFolder + 'L3Accessb_vs_time.jpg',dpi=1200 )
+		plt.close()
+
+	plt.suptitle('SOCKET1 READ vs Time')
+	plt.plot(eTime, skt1READ)
+	plt.savefig(trialFolder + 'SKT1READ_vs_time.jpg', dpi=1200 )
+	plt.close()
+
+	plt.suptitle('SOCKET1 WRITE vs Time')
+	plt.plot(eTime, skt1WRITE)
+	plt.savefig(trialFolder + 'SKT1WRITE_vs_time.jpg', dpi=1200 )
 	plt.close()
