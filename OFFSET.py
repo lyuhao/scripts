@@ -1,4 +1,5 @@
 AGG = {
+	'elapsed' : 0,
 	'aIPCls' : 1,
 	'sL3MISSls' : 2,
 	'hiL3CLKls' : 3,

@@ -33,7 +33,7 @@ if not os.path.isfile(binPath):
 	print "Bin file " + binPath + " does not exist"
 	exit(1)
 if not os.path.isfile(aggPath):
-	print "Agg file " + aggPath + " does not exist, please run see_csv_agg.py on csv file first"
+	print "Agg file " + aggPath + " does not exist, please run get_aggregate_data_from_csv.py on csv file first"
 	exit(1)
 
 binFile = open(binPath,'r')
