@@ -1,6 +1,9 @@
 #!/bin/bash
 
-#turn off turbo boost
+#turn on all cores
+sudo ~/gitRepo/scripts/bash_scripts/enable_cores.sh
+
+#turn on turbo boost
 sudo ~/gitRepo/scripts/bash_scripts/turbo-boost.sh enable
 
 #disable c-states
