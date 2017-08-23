@@ -49,7 +49,7 @@ for folder in folders:
 	aggPath = folder+'/'+folder+'.agg'
 
 	if not os.path.isfile(aggPath):
-		print "Agg file " + aggPath + " does not exist, please run see_csv_agg.py on csv file first"
+		print "Agg file " + aggPath + " does not exist, please run sget_aggregate_data_from_csv.py csv file first"
 		exit(1)
 
 	aggFile = open(aggPath,'r')

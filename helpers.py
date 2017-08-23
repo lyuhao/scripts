@@ -113,6 +113,17 @@ def getSparkTime(aFile): # returns system time when spark started in nanoseconds
 			sparkTime = float(words[-1])*1e9
 			break
 	return sparkTime
-def pErr(aString, errNum): #short for print error
+
+def pErr(aString, errNum=1): #short for print error
 	print 'ERROR: ' + aString
 	exit(int(errNum))
+
+def pWarn(aString):
+	print 'WARNING: ' + aString
+
+def getDir(path):
+	tree = path.split('/')
+	dirPath = ''
+	for i in range(0, len(tree) - 1):
+		dirPath = dirPath + tree[i] + '/'
+	return dirPath
