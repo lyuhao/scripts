@@ -15,6 +15,10 @@ BIN = {
 	'queue' : 2,
 	'service' : 3,
 	'latency' : 4,
-	'svcStart' : 5
-	
+	'svcStart' : 5,
+	'instrRetired' : 6,
+	'sktRead' : 7,
+	'sktWrite' : 8,
+	'L3Miss' : 9,
+	'L3HitRate' : 10
 }
