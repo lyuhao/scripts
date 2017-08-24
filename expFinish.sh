@@ -10,6 +10,6 @@ sudo ~/gitRepo/scripts/bash_scripts/turbo-boost.sh enable
 sudo ~/gitRepo/scripts/bash_scripts/reset_cstate.sh 
 
 #turn on puppet agent
-sudo puppet agent --enable
+#sudo puppet agent --enable
 
 
