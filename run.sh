@@ -13,9 +13,9 @@ echo $! > spark.pid
 
 $ONLINE_HOME/run_networked.sh $4 $5 $6 &
 
-sudo $PER_COUNTER_HOME/pcm.x -r -csv=$2_$3_$5.csv -i=300000 &
+sudo $PER_COUNTER_HOME/pcm.x -r 0.05 -csv=$2_$3_$5.csv -i=300000 &
 
-#echo $! > pcm.pid
+echo $! > pcm.pid
 
 #cat pcm.pid
 
@@ -26,7 +26,6 @@ wait $(cat spark.pid)
 sleep 1
 
 $ONLINE_HOME/kill_networked.sh
-
 sudo pkill -TERM -P $(cat pcm.pid)
 
 
