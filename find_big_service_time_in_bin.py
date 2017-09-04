@@ -12,7 +12,7 @@ input_file = str(sys.argv[1])
 
 print "Reading data from " + input_file
 
-if sys.argc > 2:
+if len(sys.argv) > 2:
 	threshold = int(sys,argv[2])
 
 with  open(input_file, 'r') as file:
