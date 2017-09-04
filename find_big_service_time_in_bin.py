@@ -2,15 +2,18 @@
 
 # A simple script that prints line numbers and lines
 # that has service time greater than a threshold
-
+# argument: filename [threshold]
 import matplotlib.pyplot as plt
 import sys
 import OFFSET
 
-threshold = 5000000
+threshold = 3000000
 input_file = str(sys.argv[1])
 
 print "Reading data from " + input_file
+
+if sys.argc > 2:
+	threshold = int(sys,argv[2])
 
 with  open(input_file, 'r') as file:
 	lineNumber = 0
