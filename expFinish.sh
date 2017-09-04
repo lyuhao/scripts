@@ -12,4 +12,4 @@ sudo ~/scripts/bash_scripts/reset_cstate.sh
 #turn on puppet agent
 #sudo puppet agent --enable
 
-
+sudo cpupower frequency-set -g ondemand

@@ -19,3 +19,5 @@ sudo ~/scripts/bash_scripts/set_cstate.sh 1 0
 
 #turn off turbo boost
 sudo ~/scripts/bash_scripts/turbo-boost.sh disable
+
+sudo cpupower frequency-set -f 2.10GHz
