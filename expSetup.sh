@@ -4,7 +4,7 @@
 #sudo puppet agent --disable "running experiment"
 
 #turn on all cores
-sudo ~/gitRepo/scripts/bash_scripts/enable_cores.sh
+sudo ~/scripts/bash_scripts/enable_cores.sh
 
 #turn off core 13,14,15
 #because ls application runs on core 5-7
@@ -18,4 +18,4 @@ sudo ~/scripts/bash_scripts/turnoff_cpu.sh 13 14 15
 sudo ~/scripts/bash_scripts/set_cstate.sh 1 0 
 
 #turn off turbo boost
-sudo ~/gitRepo/scripts/bash_scripts/turbo-boost.sh disable
+sudo ~/scripts/bash_scripts/turbo-boost.sh disable
