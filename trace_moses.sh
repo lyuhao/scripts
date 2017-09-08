@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #setup
-source ./paths.sh
+source ./paths.conf
 
 #check
 if ! [ -d ${ONLINE_HOME} ]

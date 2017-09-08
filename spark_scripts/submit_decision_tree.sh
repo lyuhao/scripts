@@ -1,14 +1,7 @@
 #! /bin/bash
 
-echo "-----------starting linear_regression---------------"
-
 /home/ds318/spark/bin/spark-submit --num-executors 20 --jars /home/ds318/spark/examples/target/scala-2.11/jars/scopt_2.11-3.3.0.jar \
---class org.apache.spark.examples.mllib.LinearRegression --master spark://$(hostname):7077 \
+--class org.apache.spark.examples.mllib.DecisionTreeRunner --master spark://$(hostname):7077 \
 --deploy-mode client \
 /home/ds318/spark/examples/target/scala-2.11/jars/spark-examples_2.11-2.1.0.jar \
- ~/yuhao_datasets/kdda &
-
-echo $! > linear_regression.pid
-
-
-
+/home/ds318/yuhao_datasets/kdda &
