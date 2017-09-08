@@ -17,29 +17,24 @@ then
         exit 1
 fi
 
-if ! [ -d ${PER_COUNTER_HOME} ]
-then
-        echo "PER_COUNTER_HOME path ${PER_COUNTER_HOME} does not exist"
-        exit 1
-fi
-
 if [ "$#" -ne 7 ]
 then
 	echo "To be used on server to deploy LC Applicatoin"
-	echo "Please call the with the following format:"
+	echo "Usage:"
 	echo "./trace_moses_spark.sh [QPS SERVERCORES CLIENTCORES SERVER SPARKAPP FILENAME SPARKCFREQ]"
 	exit 1
 fi
+
 #parameters
-QPS=$1
-SERVERCORES=$2
-CLIENTCORES=$3
-SERVER=$4
-SPARKAPP=$5
-FILENAME=$6
-SPARKCFREQ=$7
-PCMCORES=24-35
-SPARKCORES=12-19,36-43
+QPS=100
+SERVERCORES=5-7
+SPARKSERVER=bcl15-cmp-02.egr.duke.edu
+
+SPARKAPP=$1
+TRIALNAME=$2
+SPARKCOREFREQ=$3
+
+SPARKCORES=0-4,8-12
 
 if [ -d ${FILENAME} ]
 then
