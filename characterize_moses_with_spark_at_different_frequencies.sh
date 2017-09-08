@@ -1,7 +1,7 @@
 #! /bin/bash
 
 #setup
-source ./paths.conf
+source bash_helpers/readPathsConfiguration.sh
 
 #check
 
@@ -29,12 +29,13 @@ fi
 QPS=100
 SERVERCORES=5-7
 SPARKSERVER=bcl15-cmp-02.egr.duke.edu
+SPARKCORES=0-4,8-12
 
 SPARKAPP=$1
 TRIALNAME=$2
 SPARKCOREFREQ=$3
 
-SPARKCORES=0-4,8-12
+declare -a params=("QPS" "SERVERCORES" "SPARKSERVER" "SPARKCORES" "SPARKAPP" "TRIALNAME" "SPARKCOREFREQ")
 
 if [ -d ${FILENAME} ]
 then
@@ -44,7 +45,7 @@ fi
 
 mkdir ${FILENAME}
 
-WARMUPREQS=$(( 20 * ${QPS} ))
+WARMUPREQS=$(( 50 * ${QPS} ))
 
 #write setup
 echo -e "QPS=${QPS}\nSERVERCORES=${SERVERCORES}\nCLIENTCORES=${CLIENTCORES}" | tee ${FILENAME}.setup

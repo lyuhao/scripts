@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #setup
-source ./paths.conf
+source bash_helpers/readPathsConfiguration.sh
 
 #check
 if ! [ -d ${ONLINE_HOME} ]
