@@ -4,7 +4,7 @@
 #pin this to a core that is different from client and server
 #sudo another command before executing to allow smooth operation
 
-source ./bash_helpers/readPathsConfiguration.sh
+source /home/ds318/bash_helpers/readPathsConfiguration.sh
 
 if ! [ -d ${ONLINE_HOME} ]
 then
@@ -29,7 +29,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 SERVER_THREADS=$1
 SERVER_CORES=$2
-SERVER_MACHINE=$(hostname)
+SERVER_MACHINE=bcl15-cmp-00.egr.duke.edu
 LAUNCH_SERVER_SCRIPT_CORE=4
 
 CLIENT_MACHINE=bcl15-cmp-01.egr.duke.edu
@@ -39,30 +39,21 @@ CLIENT_THREADS=1
 
 for QPS in {100..1000..50}
 do
+	#launch server
 	MAXREQS=$((400 * ${QPS}))
 	WARMUPREQS=$((50 * ${QPS}))
-	#launch server
-	echo "--Starting server locally" 
-	cd ${ONLINE_HOME}
-	sudo taskset -c ${LAUNCH_SERVER_SCRIPT_CORE} \
-		./launch_server.sh ${SERVER_THREADS} ${MAXREQS} ${WARMUPREQS} ${SERVER_CORES} &
-	echo $! > server.pid
+	echo "--Starting server on ${SERVER_MACHINE}"
+	ssh ds318@${SERVER_MACHINE} \
+		"sudo taskset -c ${LAUNCH_SERVER_SCRIPT_CORE} ${SCRIPT_HOME}/characterization_scripts/server.sh ${SERVER_THREADS} ${MAXREQS} ${WARMUPREQS} ${SERVER_CORES}" &
 	sleep 5s #wait for server to start up
 
 	#launch client
 	echo "--Starting client on ${CLIENT_MACHINE}" 
-	ssh ds318@${CLIENT_MACHINE} "sudo taskset -c ${LAUNCH_CLIENT_SCRIPT_CORE} ${ONLINE_HOME}/launch_client.sh ${QPS} ${CLIENT_THREADS} ${CLIENT_CORES} ${SERVER_MACHINE}" &
+	ssh ds318@${CLIENT_MACHINE} \
+		"sudo taskset -c ${LAUNCH_CLIENT_SCRIPT_CORE} ${SCRIPT_HOME}/characterization_scripts/client.sh ${QPS} ${CLIENT_THREADS} ${CLIENT_CORES} ${SERVER_MACHINE}" &
 
-	# wait for server to finish
-	while [ -e /proc/$PID ]
-	do
-    		sleep 5m
-	done
-	#wait $(cat server.pid)
-	rm server.pid
-	sleep 10s #wait for client to dump stats
-	echo "moving data"
-	DATADIR=${SCRIPT_HOME}/server_characterization_data/Thread${SERVER_THREADS}/QPS${QPS}
-	ssh ds318@${CLIENT_MACHINE} "mkdir ${DATADIR}"
-	ssh ds318@${CLIENT_MACHINE} "cp lats.bin DATADIR/q${QPS}.bin"
+	sleep 5s
+	echo "--Waiting for client..."
+	wait $!
+	echo "--QPS = ${QPS} completed"
 done
