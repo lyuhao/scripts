@@ -46,15 +46,16 @@ do
 	echo "--Starting server on ${SERVER_MACHINE}"
 	ssh ds318@${SERVER_MACHINE} \
 		"sudo taskset -c ${LAUNCH_SERVER_SCRIPT_CORE} ${SCRIPT_HOME}/characterization_scripts/server.sh ${SERVER_THREADS} ${MAXREQS} ${WARMUPREQS} ${SERVER_CORES}" &
+	echo $! > server_connection.pid 
 	sleep 5s #wait for server to start up
 
 	#launch client
 	echo "--Starting client on ${CLIENT_MACHINE}" 
 	ssh ds318@${CLIENT_MACHINE} \
-		"sudo taskset -c ${LAUNCH_CLIENT_SCRIPT_CORE} ${SCRIPT_HOME}/characterization_scripts/client.sh ${QPS} ${CLIENT_THREADS} ${CLIENT_CORES} ${SERVER_MACHINE}" &
+		"screen -d -m taskset -c ${LAUNCH_CLIENT_SCRIPT_CORE} ${SCRIPT_HOME}/characterization_scripts/client.sh ${QPS} ${CLIENT_THREADS} ${CLIENT_CORES} ${SERVER_MACHINE}" &
 
 	sleep 5s
-	echo "--Waiting for client..."
-	wait $!
+	echo "--Waiting for server..."
+	wait $(cat server_connection.pid)
 	echo "--QPS = ${QPS} completed"
 done
