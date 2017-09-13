@@ -42,7 +42,7 @@ do
 	sleep 5s #wait for server to start up
 
 	#launch client
-	ssh ds318@${CLIENT_MACHINE} "${sudo taskset -c ${LAUNCH_CLIENT_SCRIPT_CORE} ${ONLINE_HOME}/launch_client.sh ${QPS} ${CLIENT_THREADS} ${CLIENT_CORES} ${SERVER_MACHINE}" &
+	ssh ds318@${CLIENT_MACHINE} "sudo taskset -c ${LAUNCH_CLIENT_SCRIPT_CORE} ${ONLINE_HOME}/launch_client.sh ${QPS} ${CLIENT_THREADS} ${CLIENT_CORES} ${SERVER_MACHINE}" &
 
 	# wait for server to finish
 	wait $(cat server.pid)
