@@ -39,6 +39,7 @@ CLIENT_THREADS=1
 
 for QPS in {100..1000..50}
 do
+	sleep 5s
 	#launch server
 	MAXREQS=$((400 * ${QPS}))
 	WARMUPREQS=$((50 * ${QPS}))
