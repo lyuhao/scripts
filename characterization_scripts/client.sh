@@ -36,7 +36,7 @@ source ${ONLINE_HOME}/launch_client.sh ${QPS} ${CLIENT_THREADS} ${CLIENT_CORES} 
 
 sleep 5s #wait for client to dump stats
 echo "moving data"
-DATADIR=${SCRIPT_HOME}/server_characterization_data/Thread${SERVER_THREADS}/QPS${QPS}
+DATADIR=${SCRIPT_HOME}/server_characterization_data/Thread${SERVER_THREADS}/q${QPS}
 mkdir ${DATADIR}
 cp lats.bin DATADIR/q${QPS}.bin
 
