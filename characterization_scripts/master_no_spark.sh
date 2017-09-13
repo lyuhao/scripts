@@ -4,7 +4,7 @@
 #pin this to a core that is different from client and server
 #sudo another command before executing to allow smooth operation
 
-source /home/ds318/bash_helpers/readPathsConfiguration.sh
+source  /home/ds318/scripts/bash_helpers/readPathsConfiguration.sh
 
 if ! [ -d ${ONLINE_HOME} ]
 then
