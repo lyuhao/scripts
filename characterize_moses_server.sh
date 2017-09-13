@@ -18,6 +18,13 @@ then
         exit 1
 fi
 
+if [ "$#" -ne 2 ]
+then 
+	echo "Usage:"
+	echo "${BASH_SOURCE[0]} SERVER_THREADS SERVER_CORES"
+	exit 1
+fi
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 SERVER_THREADS=$1
@@ -35,6 +42,7 @@ do
 	MAXREQS=$((400 * ${QPS}))
 	WARMUPREQS=$((50 * ${QPS}))
 	#launch server
+	echo "--Starting server locally" 
 	cd ${ONLINE_HOME}
 	sudo taskset -c ${LAUNCH_SERVER_SCRIPT_CORE} \
 		./launch_server.sh ${SERVER_THREADS} ${MAXREQS} ${WARMUPREQS} ${SERVER_CORES} &
@@ -42,13 +50,18 @@ do
 	sleep 5s #wait for server to start up
 
 	#launch client
+	echo "--Starting client on ${CLIENT_MACHINE}" 
 	ssh ds318@${CLIENT_MACHINE} "sudo taskset -c ${LAUNCH_CLIENT_SCRIPT_CORE} ${ONLINE_HOME}/launch_client.sh ${QPS} ${CLIENT_THREADS} ${CLIENT_CORES} ${SERVER_MACHINE}" &
 
 	# wait for server to finish
-	wait $(cat server.pid)
+	while [ -e /proc/$PID ]
+	do
+    		sleep 5m
+	done
+	#wait $(cat server.pid)
 	rm server.pid
 	sleep 10s #wait for client to dump stats
-
+	echo "moving data"
 	DATADIR=${SCRIPT_HOME}/server_characterization_data/Thread${SERVER_THREADS}/QPS${QPS}
 	ssh ds318@${CLIENT_MACHINE} "mkdir ${DATADIR}"
 	ssh ds318@${CLIENT_MACHINE} "cp lats.bin DATADIR/q${QPS}.bin"
