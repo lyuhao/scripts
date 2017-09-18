@@ -34,4 +34,8 @@ SERVER_MACHINE=$4
 #launch client
 source ${ONLINE_HOME}/launch_client.sh ${QPS} ${CLIENT_THREADS} ${CLIENT_CORES} ${SERVER_MACHINE}
 
+sleep 5s #wait for client to dump stats
+echo "moving data"
+DATADIR=${SCRIPT_HOME}/server_characterization_data
+cp lats.bin ${DATADIR}/q${QPS}.bin
 

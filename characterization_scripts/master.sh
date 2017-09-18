@@ -96,7 +96,6 @@ do
 			"screen -d -m taskset -c ${LAUNCH_CLIENT_SCRIPT_CORE} ${SCRIPT_HOME}/characterization_scripts/client.sh ${QPS} ${CLIENT_THREADS} ${CLIENT_CORES} ${SERVER_MACHINE}" &
 
 		#submit spark job
-		
 		if ! [ -z ${SPARK_APP} ]
 		then
 		sleep 3m
@@ -116,5 +115,13 @@ do
 				"${SCRIPT_HOME}/kill_spark_worker.sh"
 		sleep 5s
 		fi
+
+		#move data stored on client machine
+
+		sleep 5s #wait for client to dump stats
+		echo "moving data"
+		DATADIR=${SCRIPT_HOME}/server_characterization_data
+		ssh ds318@${CLIENT_MACHINE} \
+			"cp lats.bin ${DATADIR}/f${CORE_FREQUENCY}.bin"
 	done
 done
