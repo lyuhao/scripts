@@ -21,4 +21,4 @@ MASTER_IP=$3
 
 sudo cpupower -c ${SPARK_CORES} frequency-set -f ${CORE_FREQUENCY}
 
-tasket -c ${SPARK_CORES} ${SPARK_HOME}/sbin/start-slave.sh ${MASTER_IP}:7077
+taskset -c ${SPARK_CORES} ${SPARK_HOME}/sbin/start-slave.sh ${MASTER_IP}:7077
