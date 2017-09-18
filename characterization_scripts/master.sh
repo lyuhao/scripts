@@ -95,15 +95,19 @@ do
 		ssh ds318@${CLIENT_MACHINE} \
 			"screen -d -m taskset -c ${LAUNCH_CLIENT_SCRIPT_CORE} ${SCRIPT_HOME}/characterization_scripts/client.sh ${QPS} ${CLIENT_THREADS} ${CLIENT_CORES} ${SERVER_MACHINE}" &
 
-		sleep 3m
 		#submit spark job
+		
+		if ! [ -z ${SPARK_APP} ]
+		then
+		sleep 3m
 		echo "--submitting spark job ${SPARK_APP}"
 		. ${SPARK_SCRIPTS_HOME}/submit_${SPARK_APP}.sh
-		
+		fi
+
 		echo "--Waiting for server..."
 		wait $(cat server_connection.pid)
 		echo "--QPS = ${QPS} completed"
-		
+
 		#kill spark worker on server
 		if ! [ -z ${SPARK_APP} ]
 		then
