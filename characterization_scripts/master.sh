@@ -106,14 +106,18 @@ do
 		echo "--Waiting for server..."
 		wait $(cat server_connection.pid)
 		echo "--QPS = ${QPS} completed"
-
-		#kill spark worker on server
+	
 		if ! [ -z ${SPARK_APP} ]
 		then
+			#kill spark job
+			echo "--killing spark job"
+			${SCRIPT_HOME}/kill_spark_job.sh
+			#kill spark worker on server
+			sleep 5s
 			echo "--stoping spark worker on ${SERVER_MACHINE}"
 			ssh ds318@${SERVER_MACHINE} \
 				"${SCRIPT_HOME}/kill_spark_worker.sh"
-		sleep 5s
+			sleep 5s
 		fi
 
 		#move data stored on client machine
