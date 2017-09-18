@@ -36,49 +36,6 @@ with file:
 file.close()
 
 print "Creating plots from raw data"
-# print "Creating time vs id plot"
-# fig,ax = plt.subplots()
-# fig.suptitle('Service and Response Time vs. Id')
-# ax.plot(ids,svcTimes,'go',label='service')
-# ax.plot(ids,ltcTimes,'ro',label='latency')
-# ax.set_xlabel('id')
-# ax.set_ylabel('time (ms)')
-# plt.legend()
-# #plt.show()
-# fig.savefig(input_file+'_time_vs_id.jpg')
-# plt.close(fig)
-
-# print "Creating latency vs service plot"
-# fig,ax = plt.subplots()
-# fig.suptitle('Latency vs. Service Time')
-# ax.plot(svcTimes,ltcTimes,'ko')
-# ax.set_xlabel('Service time (ms)')
-# ax.set_ylabel('Latency time (ms)')
-# #plt.show()
-# fig.savefig(input_file+'_latency_vs_service.jpg')
-# plt.close(fig)
-
-# print "Creating id vs time plot"
-# fig,ax = plt.subplots()
-# fig.suptitle('Id vs. Time')
-# ax.plot(genTimes,ids,'g',label='generation time')
-# ax.plot(finTimes,ids,'r',label='finish time')
-# ax.set_xlabel('time (ms)')
-# ax.set_ylabel('id')
-# plt.legend()
-# plt.show()
-# fig.savefig(input_file+'_id_vs_time.jpg')
-# plt.close(fig)
-
-# print "Creating latency vs generation time plot"
-# fig,ax = plt.subplots()
-# fig.suptitle('Latency vs. Generation Time')
-# ax.plot(genTimes,ltcTimes,'o',)
-# ax.set_xlabel('generation time (ms)')
-# ax.set_ylabel('latency time (ms)')
-# # plt.show()
-# fig.savefig(input_file+'_latency_vs_generation.jpg')
-# plt.close(fig)	
 
 print "Creating latency and service  vs generation time plot"
 fig,ax = plt.subplots()

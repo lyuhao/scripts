@@ -4,6 +4,8 @@ import datetime
 import pytz
 from dateutil import parser
 import math
+from glob import glob
+
 #useful constants
 CDISP = {   #dictionary for stats displacement for core
 	'EXEC' : 0,
@@ -127,3 +129,9 @@ def getDir(path):
 	for i in range(0, len(tree) - 1):
 		dirPath = dirPath + tree[i] + '/'
 	return dirPath
+
+def getRidOfLastFewCharacters(aString, length):
+	return aString[:-length]
+
+def parseWildCards(string) :
+	return glob(string)
