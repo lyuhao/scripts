@@ -50,7 +50,7 @@ then
         echo "SCRIPT_HOME path ${SPARK_SCRIPTS_HOME} does not exist"
         exit 1
 	fi
-
+fi
 
 ## adopted from https://stackoverflow.com/questions/8880603/loop-through-an-array-of-strings-in-bash
 ## declare an array variable
