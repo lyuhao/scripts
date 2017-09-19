@@ -62,4 +62,6 @@ class BinAnalysis:
 	def clearData(self):
 		self.bin_data.clear()
 
+	def getList(self,list_name):
+		return self.bin_data[list_name]
 

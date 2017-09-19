@@ -9,15 +9,13 @@ import helpers
 
 bin_analysis = BinAnalysis.BinAnalysis()
 
-service_times = []
-ids = []
-
 fig,ax = plt.subplots()
 data_file_number = 0
+
 for bin_file in sys.argv[1:]:
 	bin_analysis.readBinFile(bin_file)
 	line_color = helpers.getBuiltInColor(data_file_number)
-	bin_analysis.plotData(ax, 'id', 'service_time', line_color + '.', 'bin_file')
+	bin_analysis.plotData(ax, 'id', 'service_time', line_color + '.', bin_file)
 	ax.set_xlabel('request id')
 	ax.set_ylabel('service time (ns)')
 	bin_analysis.clearData()
