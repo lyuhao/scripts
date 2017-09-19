@@ -40,7 +40,7 @@ LAUNCH_CLIENT_SCRIPT_CORE=4
 CLIENT_CORES=5-7
 CLIENT_THREADS=1
 
-SPARK_APP="linear_regression"
+SPARK_APP="decision_tree"
 SPARK_CORES=0-4,8-12
 
 if [ -z ${SPARK_APP} ]
