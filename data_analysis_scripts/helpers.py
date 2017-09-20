@@ -34,6 +34,8 @@ NUMCORE=48
 EPOCH = datetime.datetime.utcfromtimestamp(0)
 LOCALTZONE = pytz.timezone ("America/Los_Angeles")
 
+BUILTIN_COLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k'] #excluding 'w' (white) at the end
+
 #helper functions
 def getColNum (letters): #take csv column index as input, output corresponding number to use
 	sum = 0
@@ -135,3 +137,8 @@ def getRidOfLastFewCharacters(aString, length):
 
 def parseWildCards(string) :
 	return glob(string)
+
+def getBuiltInColor(index):
+	index = index % len(BUILTIN_COLORS)
+	return BUILTIN_COLORS[index]
+

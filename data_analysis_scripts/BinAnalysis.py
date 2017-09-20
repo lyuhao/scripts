@@ -20,7 +20,10 @@ class BinAnalysis:
 		'socket_read' : 7,
 		'socket_write' : 8,
 		'L3_miss_number' : 9,
-		'L3_hit_rate' : 10
+		'L3_hit_rate' : 10,
+		'time_on_server' : 11,
+		'time_request_arrived_on_server' : 12,
+		'worker_thread_core_id' : 13
 	}
 		self.BIN_COLUMN_NUMBER_TO_TYPE = {}
 		self.bin_data = {}
@@ -59,4 +62,6 @@ class BinAnalysis:
 	def clearData(self):
 		self.bin_data.clear()
 
+	def getList(self,list_name):
+		return self.bin_data[list_name]
 
