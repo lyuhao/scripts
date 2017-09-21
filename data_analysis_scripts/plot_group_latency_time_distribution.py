@@ -29,7 +29,7 @@ for input_file in sys.argv[1:]:
 fig.suptitle('Percentile vs. Latency')
 ax.set_xlabel('latency (ns)')
 ax.set_ylabel('percentile')
-ax.set_xlim([0, 1e8])
+#ax.set_xlim([0, 1e8])
 ax.set_ylim([0 ,0.99])
 plt.legend()
 #plt.show()
