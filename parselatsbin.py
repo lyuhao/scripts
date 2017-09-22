@@ -54,7 +54,8 @@ yvals_latency_list = list(yvals_latency)
 
 index_95 = 0 
 index_99 = 0
-
+index_50 = 0
+index_75 = 0
 for i in range(0,len(yvals_service_list)):
 #	print str(sorted_service_time_list)+' '+str(yvals_service_list)+'\n'
 	cdf_file.write(str(sorted_latency_time_list[i])+' '+str(yvals_latency_list[i])+'\n') 
@@ -62,22 +63,28 @@ for i in range(0,len(yvals_service_list)):
 		index_99 = i
 	if ((yvals_latency_list[i]-0.95) < 1e-4):
 		index_95 = i
+	if ((yvals_latency_list[i] - 0.5) < 1e-4):
+		index_50 = i
+	if ((yvals_latency_list[i] - 0.75) < 1e-4):
+		index_75 = i
 
-
+print 'median: ', sorted_latency_time_list[index_50]
+print '75th-percentile: ', sorted_latency_time_list[index_75]
 print '95th-percentile: ', sorted_latency_time_list[index_95]
 print '99th-percentile: ', sorted_latency_time_list[index_99]
 
-start_time_list = range(0,len(service_time_list));
-plt.figure(1)
-plt.subplot(211)
-plt.plot(start_time_list,service_time_list,'b')
-plt.xlabel('GenTime')
-plt.ylabel('Service Time')
-plt.ylim([0,20])
 
-plt.subplot(212)
-plt.plot(start_time_list,latency_time_list,'r')
-plt.xlabel('GenTime')
-plt.ylabel('latency time')
+#start_time_list = range(0,len(service_time_list));
+#plt.figure(1)
+#plt.subplot(211)
+#plt.plot(start_time_list,service_time_list,'b')
+#plt.xlabel('GenTime')
+#plt.ylabel('Service Time')
+#plt.ylim([0,20])
 
-plt.show()
+#plt.subplot(212)
+#plt.plot(start_time_list,latency_time_list,'r')
+#plt.xlabel('GenTime')
+#plt.ylabel('latency time')
+
+#plt.show()
