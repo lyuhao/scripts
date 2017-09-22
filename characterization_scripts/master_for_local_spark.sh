@@ -68,57 +68,55 @@ declare -a CORE_FREQUENCYS=("1.20GHz" "1.50GHz" "1.80GHz" "2.10GHz")
 
 for CORE_FREQUENCY in "${CORE_FREQUENCYS[@]}"
 do
-	for QPS in {500..510..50} # run a single time
-	do
-		sleep 3s
+	QPS=450 # run a single time
+	sleep 3s
+	
+	#launch server
+	MAXREQS=$((400 * ${QPS}))
+	WARMUPREQS=$((50 * ${QPS}))
+	echo "--Starting server on ${SERVER_MACHINE}"
+	ssh ds318@${SERVER_MACHINE} \
+		"sudo taskset -c ${LAUNCH_SERVER_SCRIPT_CORE} ${SCRIPT_HOME}/characterization_scripts/server.sh ${SERVER_THREADS} ${MAXREQS} ${WARMUPREQS} ${SERVER_CORES}" &
+	echo $! > server_connection.pid 
+	sleep 5s #wait for server to start up
 
-		#launch server
-		MAXREQS=$((400 * ${QPS}))
-		WARMUPREQS=$((50 * ${QPS}))
-		echo "--Starting server on ${SERVER_MACHINE}"
-		ssh ds318@${SERVER_MACHINE} \
-			"sudo taskset -c ${LAUNCH_SERVER_SCRIPT_CORE} ${SCRIPT_HOME}/characterization_scripts/server.sh ${SERVER_THREADS} ${MAXREQS} ${WARMUPREQS} ${SERVER_CORES}" &
-		echo $! > server_connection.pid 
-		sleep 5s #wait for server to start up
+	#launch client
+	echo "--Starting client on ${CLIENT_MACHINE}" 
+	ssh ds318@${CLIENT_MACHINE} \
+		"screen -d -m taskset -c ${LAUNCH_CLIENT_SCRIPT_CORE} ${SCRIPT_HOME}/characterization_scripts/client.sh ${QPS} ${CLIENT_THREADS} ${CLIENT_CORES} ${SERVER_MACHINE}" &
 
-		#launch client
-		echo "--Starting client on ${CLIENT_MACHINE}" 
-		ssh ds318@${CLIENT_MACHINE} \
-			"screen -d -m taskset -c ${LAUNCH_CLIENT_SCRIPT_CORE} ${SCRIPT_HOME}/characterization_scripts/client.sh ${QPS} ${CLIENT_THREADS} ${CLIENT_CORES} ${SERVER_MACHINE}" &
-
-		#start spark job on server machine
-		if ! [ -z ${SPARK_APP} ]
-		then
+	#start spark job on server machine
+	if ! [ -z ${SPARK_APP} ]
+	then
 		sleep 3m
 		echo "--submitting spark job ${SPARK_APP}"
 		ssh ds318@${SERVER_MACHINE} \
 		 " ${SPARK_SCRIPTS_HOME}/local_mode/run_${SPARK_APP}.sh ${SPARK_CORES}" &
-		fi
+	fi
 
-		echo "--Waiting for server..."
-		wait $(cat server_connection.pid)
-		echo "--QPS = ${QPS} completed"
+	echo "--Waiting for server..."
+	wait $(cat server_connection.pid)
+	echo "--QPS = ${QPS} completed"
 
-		if ! [ -z ${SPARK_APP} ]
-		then
-			#kill spark job
-			echo "--killing spark job on ${SERVER_MACHINE}"
-			ssh ds318@${SERVER_MACHINE} \
-				"${SCRIPT_HOME}/kill_spark_job.sh"
-			#kill spark worker on server
-			sleep 5s
-			echo "--stoping spark worker on ${SERVER_MACHINE}"
-			ssh ds318@${SERVER_MACHINE} \
-				"${SCRIPT_HOME}/kill_spark_worker.sh"
-			sleep 5s
-		fi
-
-		#move data stored on client machine
-
-		sleep 5s #wait for client to dump stats
-		echo "moving data"
-		DATADIR=${SCRIPT_HOME}/server_characterization_data
-		ssh ds318@${CLIENT_MACHINE} \
-			"cp lats.bin ${DATADIR}/f${CORE_FREQUENCY}.bin"
-	done
+	if ! [ -z ${SPARK_APP} ]
+	then
+		#kill spark job
+		echo "--killing spark job on ${SERVER_MACHINE}"
+		ssh ds318@${SERVER_MACHINE} \
+			"${SCRIPT_HOME}/kill_spark_job.sh"
+		#kill spark worker on server
+		sleep 5s
+		echo "--stoping spark worker on ${SERVER_MACHINE}"
+		ssh ds318@${SERVER_MACHINE} \
+			"${SCRIPT_HOME}/kill_spark_worker.sh"
+		sleep 5s
+	fi
+	
+	#move data stored on client machine
+	sleep 5s #wait for client to dump stats
+	echo "moving data"
+	DATADIR=${SCRIPT_HOME}/server_characterization_data
+	ssh ds318@${CLIENT_MACHINE} \
+		"cp lats.bin ${DATADIR}/f${CORE_FREQUENCY}.bin"
+	
 done
