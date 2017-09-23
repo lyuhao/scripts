@@ -68,7 +68,7 @@ declare -a CORE_FREQUENCYS=("1.20GHz" "1.50GHz" "1.80GHz" "2.10GHz")
 
 for CORE_FREQUENCY in "${CORE_FREQUENCYS[@]}"
 do
-	QPS=450 # run a single time
+	QPS=250 # run a single time
 	sleep 3s
 	
 	#launch server
