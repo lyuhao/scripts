@@ -20,18 +20,13 @@ fi
 
 
 
-if (( $# < 2 ))
-then
-    echo "Usage:"
-	echo "${BASH_SOURCE[0]} SERVER_THREADS SERVER_CORES [SPARK_APP]"
-	exit 1
-    exit 1
-fi
+echo "Usage:"
+echo "${BASH_SOURCE[0]} [SPARK_APP]"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 SERVER_THREADS=1
-SERVER_CORES=6-7
+SERVER_CORES=0-7
 SERVER_MACHINE=bcl15-cmp-00.egr.duke.edu
 LAUNCH_SERVER_SCRIPT_CORE=4
 
@@ -40,7 +35,7 @@ LAUNCH_CLIENT_SCRIPT_CORE=4
 CLIENT_CORES=5-7
 CLIENT_THREADS=1
 
-#SPARK_APP="gradient"
+SPARK_APP=$1
 SPARK_CORES=0-4,8-12
 
 if [ -z ${SPARK_APP} ]

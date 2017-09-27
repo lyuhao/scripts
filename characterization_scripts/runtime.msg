@@ -1,0 +1,2 @@
+Usage:
+./master.sh SERVER_THREADS SERVER_CORES [SPARK_APP]
