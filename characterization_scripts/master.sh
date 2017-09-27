@@ -20,13 +20,13 @@ fi
 
 
 
-# if (( $# < 2 ))
-# then
-#     echo "Usage:"
-# 	echo "${BASH_SOURCE[0]} SERVER_THREADS SERVER_CORES [SPARK_APP]"
-# 	exit 1
-#     exit 1
-# fi
+if (( $# < 2 ))
+then
+    echo "Usage:"
+	echo "${BASH_SOURCE[0]} SERVER_THREADS SERVER_CORES [SPARK_APP]"
+	exit 1
+    exit 1
+fi
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -40,7 +40,7 @@ LAUNCH_CLIENT_SCRIPT_CORE=4
 CLIENT_CORES=5-7
 CLIENT_THREADS=1
 
-SPARK_APP="gradient"
+#SPARK_APP="gradient"
 SPARK_CORES=0-4,8-12
 
 if [ -z ${SPARK_APP} ]
@@ -68,7 +68,7 @@ declare -a CORE_FREQUENCYS=("1.20GHz" "1.50GHz" "1.80GHz" "2.10GHz")
 
 for CORE_FREQUENCY in "${CORE_FREQUENCYS[@]}"
 do
-	for QPS in {100..110..50} # run a single time
+	for QPS in {500..510..50} # run a single time
 	do
 		sleep 3s
 
