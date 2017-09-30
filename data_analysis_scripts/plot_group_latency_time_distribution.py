@@ -10,6 +10,19 @@ bin_analysis = BinAnalysis.BinAnalysis()
 
 fig,ax = plt.subplots()
 data_file_number = 0
+percentile = 1
+x_limit = -1
+for argument in sys.argv:
+	if '--percentile=' in argument:
+		percentile = float((argument.strip().split('='))[1])
+		print 'Plotting up to ' + str(percentile) + " percentile"
+		sys.argv.remove(argument)
+
+for argument in sys.argv:
+	if '--x_limit=' in argument:
+		x_limit = float((argument.strip().split('='))[1])
+		print 'Plotting with x_limit set to ' + str(x_limit)
+		sys.argv.remove(argument)
 
 for input_file in sys.argv[1:]:
 	bin_analysis.readBinFile(input_file)
@@ -29,8 +42,9 @@ for input_file in sys.argv[1:]:
 fig.suptitle('Percentile vs. Latency')
 ax.set_xlabel('latency (ns)')
 ax.set_ylabel('percentile')
-#ax.set_xlim([0, 1e8])
-ax.set_ylim([0 ,0.99])
+if x_limit > 0:
+	ax.set_xlim([0, x_limit])
+ax.set_ylim([0 , percentile])
 plt.legend()
 #plt.show()
 fig.savefig(helpers.getDir(input_file)+'latency_distribution.jpg', dpi=1200)
