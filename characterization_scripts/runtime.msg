@@ -1,6 +1,15 @@
 Usage:
 ./master.sh [SPARK_APP]
 --Starting server on bcl15-cmp-00.egr.duke.edu
+DIR=/home/ds318/tailbench/moses
+META_THREAD_CORE = 5
+----------Server Starting----------
+TBENCH_SERVER = bcl15-cmp-00.egr.duke.edu
+TBENCH_SERVER_PORT = 7000
+TBENCH_NCLIENTS = 1
+TBENCH_MAXREQS = 200000
+TBENCH_WARMUPREQS = 25000
 --Starting client on bcl15-cmp-01.egr.duke.edu
 --Waiting for server...
---QPS = 500 completed
+----------Server Started----------
+SERVER_THREAD_0_CORE = 6
