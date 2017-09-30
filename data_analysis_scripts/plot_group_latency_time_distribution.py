@@ -12,6 +12,12 @@ fig,ax = plt.subplots()
 data_file_number = 0
 percentile = 1
 x_limit = -1
+
+if '-h' in sys.argv:
+	print '--percentile=percentile'
+	print '--x_limit=xlimit'
+	exit()
+
 for argument in sys.argv:
 	if '--percentile=' in argument:
 		percentile = float((argument.strip().split('='))[1])

@@ -8,7 +8,7 @@ source  /home/ds318/scripts/bash_helpers/readPathsConfiguration.sh
 if (( $# < 2 ))
 then
     echo "Usage:"
-	echo "${BASH_SOURCE[0]} QPS FILE_NAME"
+	echo "${BASH_SOURCE[0]} QPS FILE_NAME [SPARK_APP]"
  	exit 1
 fi
 
@@ -36,11 +36,12 @@ LAUNCH_CLIENT_SCRIPT_CORE=4
 CLIENT_CORES=5-7
 CLIENT_THREADS=1
 
-SPARK_APP="correlation"
+
 SPARK_CORES=0-4,8-12
 
 QPS=$1
 FILE_NAME=$2
+SPARK_APP=$3
 
 if [ -z ${SPARK_APP} ]
 then
