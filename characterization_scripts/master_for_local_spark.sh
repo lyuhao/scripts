@@ -45,6 +45,8 @@ SPARK_APP=$3
 
 if [ -z ${SPARK_APP} ]
 then
+	echo "NO SPARK JOB IS GIVEN"
+else
 	if ! [ -d ${SPARK_SCRIPTS_HOME} ]
 	then
         echo "SCRIPT_HOME path ${SPARK_SCRIPTS_HOME} does not exist"
