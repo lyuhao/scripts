@@ -61,7 +61,7 @@ MAXREQS=$((400 * ${QPS}))
 WARMUPREQS=$((50 * ${QPS}))
 echo "--Starting server on ${SERVER_MACHINE}"
 ssh ds318@${SERVER_MACHINE} \
-	"taskset -c ${LAUNCH_SERVER_SCRIPT_CORE} ${SCRIPT_HOME}/characterization_scripts/server.sh ${SERVER_THREADS} ${MAXREQS} ${WARMUPREQS} ${SERVER_CORES}" &
+	"taskset -c ${LAUNCH_SERVER_SCRIPT_CORE} ${SCRIPT_HOME}/characterization_scripts/server.sh ${SERVER_THREADS} ${MAXREQS} ${WARMUPREQS} " &
 echo $! > server_connection.pid 
 sleep 5s #wait for server to start up
 
