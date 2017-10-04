@@ -20,18 +20,13 @@ fi
 
 
 
-# if (( $# < 2 ))
-# then
-#     echo "Usage:"
-# 	echo "${BASH_SOURCE[0]} SERVER_THREADS SERVER_CORES [SPARK_APP]"
-# 	exit 1
-#     exit 1
-# fi
+echo "Usage:"
+echo "${BASH_SOURCE[0]} [SPARK_APP]"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 SERVER_THREADS=1
-SERVER_CORES=6-7
+SERVER_CORES=0-7
 SERVER_MACHINE=bcl15-cmp-00.egr.duke.edu
 LAUNCH_SERVER_SCRIPT_CORE=4
 
@@ -40,7 +35,7 @@ LAUNCH_CLIENT_SCRIPT_CORE=4
 CLIENT_CORES=5-7
 CLIENT_THREADS=1
 
-SPARK_APP="gradient"
+SPARK_APP=$1
 SPARK_CORES=0-4,8-12
 
 if [ -z ${SPARK_APP} ]
@@ -68,7 +63,7 @@ declare -a CORE_FREQUENCYS=("1.20GHz" "1.50GHz" "1.80GHz" "2.10GHz")
 
 for CORE_FREQUENCY in "${CORE_FREQUENCYS[@]}"
 do
-	for QPS in {100..110..50} # run a single time
+	for QPS in {500..510..50} # run a single time
 	do
 		sleep 3s
 
@@ -86,7 +81,8 @@ do
 		WARMUPREQS=$((50 * ${QPS}))
 		echo "--Starting server on ${SERVER_MACHINE}"
 		ssh ds318@${SERVER_MACHINE} \
-			"sudo taskset -c ${LAUNCH_SERVER_SCRIPT_CORE} ${SCRIPT_HOME}/characterization_scripts/server.sh ${SERVER_THREADS} ${MAXREQS} ${WARMUPREQS} ${SERVER_CORES}" &
+			"taskset -c ${LAUNCH_SERVER_SCRIPT_CORE} ${SCRIPT_HOME}/characterization_scripts/server.sh ${SERVER_THREADS} ${MAXREQS} ${WARMUPREQS} ${SERVER_CORES}" &	
+			#"sudo taskset -c ${LAUNCH_SERVER_SCRIPT_CORE} ${SCRIPT_HOME}/characterization_scripts/server.sh ${SERVER_THREADS} ${MAXREQS} ${WARMUPREQS} ${SERVER_CORES}" &
 		echo $! > server_connection.pid 
 		sleep 5s #wait for server to start up
 
