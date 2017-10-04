@@ -16,7 +16,7 @@ TAILBENCH_JOB=$1
 
 if ps -aux | grep tailbench | grep ${TAILBENCH_JOB} > /dev/null
 then
-	echo $(`ps -ef | grep master | grep spark | grep java | grep -v grep | awk '{print $2}'`)
+	echo "$(ps -ef | grep tailbench | grep ${TAILBENCH_JOB} | grep -v grep | awk '{print $2}')"
 else
 	echo -1
 fi
