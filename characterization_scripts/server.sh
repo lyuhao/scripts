@@ -32,7 +32,7 @@ cp ${ONLINE_HOME}/moses.ini.template ${ONLINE_HOME}/moses.ini
 sed -i -e "s#@DATA_ROOT#$DATA_ROOT#g" ${ONLINE_HOME}/moses.ini
 
 # Launch Server
-TBENCH_MAXREQS=${MAXREQS} TBENCH_WARMUPREQS=${WARMUPREQS} TBENCH_NCLIENTS=1 \
+sudo TBENCH_MAXREQS=${MAXREQS} TBENCH_WARMUPREQS=${WARMUPREQS} TBENCH_NCLIENTS=1 \
 TBENCH_SERVER=$(hostname) \
 ${BINDIR}/moses_server_networked \
     -config ${ONLINE_HOME}/moses.ini \
