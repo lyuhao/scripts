@@ -12,6 +12,7 @@ fig,ax = plt.subplots()
 data_file_number = 0
 percentile = 1
 x_limit = -1
+exclude_percentage = 0
 
 if '-h' in sys.argv:
 	print '--percentile=percentile'
@@ -30,6 +31,12 @@ for argument in sys.argv:
 		print 'Plotting with x_limit set to ' + str(x_limit)
 		sys.argv.remove(argument)
 
+for argument in sys.argv:
+	if '--exclude=' in argument:
+		exclude_percentage = float((argument.strip().split('='))[1])
+		print 'excluding the first ' + str(exclude_percentage*100)+"% data"
+		sys.argv.remove(argument)
+
 for input_file in sys.argv[1:]:
 	bin_analysis.readBinFile(input_file)
 
@@ -37,9 +44,16 @@ for input_file in sys.argv[1:]:
 
 	sorted_latency_list = list(sorted_latency_array)
 
+	caring_data_from_id = int(len(sorted_latency_list) * exclude_percentage)
+	sorted_latency_list = sorted_latency_list[caring_data_from_id:]
+
+
 	yvals_array = np.arange(len(sorted_latency_list))/float(len(sorted_latency_list))
 	yvals_list = list(yvals_array)
 	file_name = input_file[len(helpers.getDir(input_file)):]
+
+	plot_start_id = int(len(sorted_latency_list) * exclude_percentage)
+
 	ax.plot(sorted_latency_list,yvals_list,helpers.getBuiltInColor(data_file_number),label=file_name)
 	bin_analysis.clearData()
 	data_file_number += 1
