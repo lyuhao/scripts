@@ -24,6 +24,7 @@ class BinAnalysis:
 		'time_on_server' : 11,
 		'time_request_arrived_on_server' : 12,
 		'worker_thread_core_id' : 13
+		'L3_occupancy' : 14
 	}
 		self.BIN_COLUMN_NUMBER_TO_TYPE = {}
 		self.bin_data = {}
@@ -53,6 +54,18 @@ class BinAnalysis:
 
 	def plotData(self, axis, xvar_name, yvar_name, line_style = 'k-', _label = ''):
 		xvar_data = self.bin_data[xvar_name]
+		yvar_data = self.bin_data[yvar_name]
+		if _label == '':
+			axis.plot(xvar_data, yvar_data, line_style)
+		else:
+			axis.plot(xvar_data, yvar_data, line_style, label = _label)
+
+	def plotDataVsMemoryBandWidth(self, axis, yvar_name, line_style = 'k-', _label = ''):
+		xvar_data = []
+		for index, socket_read in enumerate(self.bin_data["socket_read"]):
+    		soeckt_write = self.bin_data["socket_write"][idx]
+    		memory_bandwidth = socket_read + socket_write
+    		xvar_data.append(memory_bandwidth)
 		yvar_data = self.bin_data[yvar_name]
 		if _label == '':
 			axis.plot(xvar_data, yvar_data, line_style)
