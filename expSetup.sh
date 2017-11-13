@@ -6,9 +6,9 @@
 #turn on all cores
 sudo ~/scripts/bash_scripts/enable_cores.sh
 
-#turn off core 13,14,15
-#because ls application runs on core 5-7
-sudo ~/scripts/bash_scripts/turnoff_cpu.sh 13 14 15
+#turn off core 8,9,10
+#because ls application runs on core 3-7
+sudo ~/scripts/bash_scripts/turnoff_cpu.sh 8 9 10
 
 #change sudo time windows
 #sudo visudo
