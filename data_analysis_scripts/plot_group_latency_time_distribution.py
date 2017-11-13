@@ -17,6 +17,7 @@ exclude_percentage = 0
 if '-h' in sys.argv:
 	print '--percentile=percentile'
 	print '--x_limit=xlimit'
+	print '--exclude=front_portion_of_data'
 	exit()
 
 for argument in sys.argv:
@@ -51,8 +52,6 @@ for input_file in sys.argv[1:]:
 	yvals_array = np.arange(len(sorted_latency_list))/float(len(sorted_latency_list))
 	yvals_list = list(yvals_array)
 	file_name = input_file[len(helpers.getDir(input_file)):]
-
-	plot_start_id = int(len(sorted_latency_list) * exclude_percentage)
 
 	ax.plot(sorted_latency_list,yvals_list,helpers.getBuiltInColor(data_file_number),label=file_name)
 	bin_analysis.clearData()
