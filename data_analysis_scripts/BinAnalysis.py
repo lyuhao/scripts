@@ -60,12 +60,21 @@ class BinAnalysis:
 			self.runLinearRegression(axis, xvar_data, yvar_data)
 
 	def plotDataVsMemoryBandWidth(self, axis, yvar_name, line_style = 'k-', _label = '', do_linear_regression = False):
-		xvar_data = []
-		for index, socket_read in enumerate(self.bin_data["socket_read"]):
-			socket_write = self.bin_data["socket_write"][idx]
-    		memory_bandwidth = socket_read + socket_write
-    		xvar_data.append(memory_bandwidth)
+		
+		xvar_data = \
+			[read + write for read, write in zip(self.bin_data["socket_read"], self.bin_data["socket_write"])]
+
+		# xvar_data = []
+		# socket_read_list = self.bin_data["socket_read"]
+		# print socket_read_list
+		# print str(len(socket_read_list))
+		# for index, socket_read in enumerate( socket_read_list):
+		# 	socket_write = self.bin_data["socket_write"][index]
+  #   		memory_bandwidth = socket_read + socket_write
+  #   		xvar_data.append(memory_bandwidth)
 		yvar_data = self.bin_data[yvar_name]
+		# print "memory_bandwidth length is " + str(len(xvar_data))
+		# print "y_var length is " + str(len(yvar_data))
 		if _label == '':
 			axis.plot(xvar_data, yvar_data, line_style)
 		else:
