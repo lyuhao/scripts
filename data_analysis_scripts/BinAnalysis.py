@@ -1,11 +1,7 @@
 #!/usr/bin/python
 import matplotlib.pyplot as plt
-
+from scipy import stats
 class BinAnalysis:
-
-	
-
-	
 
 	def __init__(self):
 
@@ -23,7 +19,7 @@ class BinAnalysis:
 		'L3_hit_rate' : 10,
 		'time_on_server' : 11,
 		'time_request_arrived_on_server' : 12,
-		'worker_thread_core_id' : 13
+		'worker_thread_core_id' : 13,
 		'L3_occupancy' : 14
 	}
 		self.BIN_COLUMN_NUMBER_TO_TYPE = {}
@@ -52,18 +48,21 @@ class BinAnalysis:
 					self.bin_data[data_name].append(data_float_type)
 					colmun_number += 1
 
-	def plotData(self, axis, xvar_name, yvar_name, line_style = 'k-', _label = ''):
+
+	def plotData(self, axis, xvar_name, yvar_name, line_style = 'k-', _label = '', do_linear_regression = False):
 		xvar_data = self.bin_data[xvar_name]
 		yvar_data = self.bin_data[yvar_name]
 		if _label == '':
 			axis.plot(xvar_data, yvar_data, line_style)
 		else:
 			axis.plot(xvar_data, yvar_data, line_style, label = _label)
+		if do_linear_regression:
+			self.runLinearRegression(axis, xvar_data, yvar_data)
 
-	def plotDataVsMemoryBandWidth(self, axis, yvar_name, line_style = 'k-', _label = ''):
+	def plotDataVsMemoryBandWidth(self, axis, yvar_name, line_style = 'k-', _label = '', do_linear_regression = False):
 		xvar_data = []
 		for index, socket_read in enumerate(self.bin_data["socket_read"]):
-    		soeckt_write = self.bin_data["socket_write"][idx]
+			socket_write = self.bin_data["socket_write"][idx]
     		memory_bandwidth = socket_read + socket_write
     		xvar_data.append(memory_bandwidth)
 		yvar_data = self.bin_data[yvar_name]
@@ -71,10 +70,25 @@ class BinAnalysis:
 			axis.plot(xvar_data, yvar_data, line_style)
 		else:
 			axis.plot(xvar_data, yvar_data, line_style, label = _label)
+		if do_linear_regression:
+			self.runLinearRegression(axis, xvar_data, yvar_data)
 
 	def clearData(self):
 		self.bin_data.clear()
 
 	def getList(self,list_name):
 		return self.bin_data[list_name]
+
+	def runLinearRegression(self, axis, x_values, y_values):
+		slope, intercept, r_value, p_value, std_err = stats.linregress(x_values,y_values)
+		leftEndx = min(x_values)
+		rightEndx = max(x_values)
+		leftEndy = leftEndx * slope + intercept
+		rightEndy = rightEndx * slope + intercept
+		axis.plot([leftEndx, rightEndx], [leftEndy, rightEndy], 'k-', label = 'line of best fit')
+		axis.text(leftEndx, leftEndy, 'y = ' + str(slope) + ' * x + ' + str(intercept) + '\nr = ' + str(r_value), \
+			fontsize=14)
+
+
+
 

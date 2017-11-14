@@ -125,12 +125,16 @@ def pErr(aString, errNum=1): #short for print error
 def pWarn(aString):
 	print 'WARNING: ' + aString
 
-def getDir(path):
+def getDir(path): #ends with /
 	tree = path.split('/')
 	dirPath = ''
 	for i in range(0, len(tree) - 1):
 		dirPath = dirPath + tree[i] + '/'
 	return dirPath
+
+def getFileName(path):
+	tree = path.split('/')
+	return tree[-1]
 
 def getRidOfLastFewCharacters(aString, length):
 	return aString[:-length]

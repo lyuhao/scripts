@@ -18,7 +18,7 @@ data_file_number = 0
 for bin_file in sys.argv[1:]:
 	bin_analysis.readBinFile(bin_file)
 	line_color = helpers.getBuiltInColor(data_file_number)
-	bin_analysis.plotData(ax, 'L3_occupancy', 'service_time', line_color + '.', bin_file)
+	bin_analysis.plotData(ax, 'L3_occupancy', 'service_time', line_color + '.', bin_file, True)
 	ax.set_xlabel('L3 Occupancy (KBytes)')
 	ax.set_ylabel('service time (ns)')
 	bin_analysis.clearData()
