@@ -49,9 +49,17 @@ class BinAnalysis:
 					colmun_number += 1
 
 
-	def plotData(self, axis, xvar_name, yvar_name, line_style = 'k-', _label = '', do_linear_regression = False):
+	def plotData(self, axis, xvar_name, yvar_name, line_style = 'k-', _label = '', 
+		do_linear_regression = False, convertToMBytes = False, convertToMs = False):
 		xvar_data = self.bin_data[xvar_name]
 		yvar_data = self.bin_data[yvar_name]
+		if convertToMBytes:
+			#TODO: only accounted for xvar_name being L3_occupancy
+			if xvar_name == "L3_occupancy":
+				xvar_data = [data/1024 for data in xvar_data]
+		if convertToMs:
+			if yvar_name == "service_time":
+				yvar_data = [data/1e6 for data in yvar_data]
 		if _label == '':
 			axis.plot(xvar_data, yvar_data, line_style)
 		else:
@@ -59,15 +67,27 @@ class BinAnalysis:
 		if do_linear_regression:
 			self.runLinearRegression(axis, xvar_data, yvar_data)
 
-	def plotDataVsMemoryBandWidth(self, axis, yvar_name, line_style = 'k-', _label = '', do_linear_regression = False):
+	def plotDataVsMemoryBandWidth(self, axis, yvar_name, line_style = 'k-', _label = '', 
+		do_linear_regression = False, convertToMBytes = False, convertToMs = False):
 		xvar_data = []
+
 		for index, socket_read in enumerate(self.bin_data["socket_read"]):
 			socket_write = self.bin_data["socket_write"][idx]
     		memory_bandwidth = socket_read + socket_write
     		xvar_data.append(memory_bandwidth)
+
+    	# if convertToMBytes:
+    	# 	xvar_data = [data/1024/1024 for data in xvar_data]
+
 		yvar_data = self.bin_data[yvar_name]
+
+		if convertToMs:
+			if yvar_name == "service_time":
+				yvar_data = [data/1e6 for data in yvar_data]
+
 		if _label == '':
 			axis.plot(xvar_data, yvar_data, line_style)
+			
 		else:
 			axis.plot(xvar_data, yvar_data, line_style, label = _label)
 		if do_linear_regression:

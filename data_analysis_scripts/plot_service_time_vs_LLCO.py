@@ -18,13 +18,13 @@ data_file_number = 0
 for bin_file in sys.argv[1:]:
 	bin_analysis.readBinFile(bin_file)
 	line_color = helpers.getBuiltInColor(data_file_number)
-	bin_analysis.plotData(ax, 'L3_occupancy', 'service_time', line_color + '.', bin_file, True)
-	ax.set_xlabel('L3 Occupancy (KBytes)')
-	ax.set_ylabel('service time (ns)')
+	bin_analysis.plotData(axis=ax, xvar_name='L3_occupancy', yvar_name='service_time', line_style=(line_color + '.'), 
+		do_linear_regression=True, convertToMBytes=True, convertToMs=True)
+	ax.set_xlabel('L3 Occupancy (MBytes)')
+	ax.set_ylabel('service time (ms)')
 	bin_analysis.clearData()
 	data_file_number += 1
 
-plt.legend()
 #stored in the folder of the last processeed file
 dir_path = helpers.getDir(bin_file)
 file_name = helpers.getFileName(bin_file)
