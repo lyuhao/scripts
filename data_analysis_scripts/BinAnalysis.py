@@ -109,8 +109,8 @@ class BinAnalysis:
 		leftEndy = leftEndx * slope + intercept
 		rightEndy = rightEndx * slope + intercept
 		axis.plot([leftEndx, rightEndx], [leftEndy, rightEndy], 'k-', label = 'line of best fit', linewidth=3)
-		axis.text((leftEndx + rightEndx)/4, rightEndy, 'y = ' + str(slope) + ' * x + ' + str(intercept) + '\nr = ' + str(r_value), \
-			fontsize=14)
+		equation = 'y = ' + str(slope) + ' * x + ' + str(intercept) + '\nr = ' + str(r_value)
+		# axis.text(0.1, 0.9, equation, ha='left', va='top', transform=axis.transAxes)
 		with open('regression.coefficient', 'w') as f:
 			f.write(str(slope) + ' ' + str(intercept) + ' ' + str(r_value) + ' ' + str(p_value) + ' ' + str(std_err)) 
 			
