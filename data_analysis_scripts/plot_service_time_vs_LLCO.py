@@ -15,15 +15,15 @@ bin_analysis = BinAnalysis.BinAnalysis()
 fig,ax = plt.subplots()
 data_file_number = 0
 
-for bin_file in sys.argv[1:]:
-	bin_analysis.readBinFile(bin_file)
-	line_color = helpers.getBuiltInColor(data_file_number)
-	bin_analysis.plotData(axis=ax, xvar_name='L3_occupancy', yvar_name='service_time', line_style=(line_color + '.'), 
-		do_linear_regression=True, convertToMBytes=True, convertToMs=True)
-	ax.set_xlabel('L3 Occupancy (MBytes)')
-	ax.set_ylabel('service time (ms)')
-	bin_analysis.clearData()
-	data_file_number += 1
+bin_file = sys.argv[1]
+bin_analysis.readBinFile(bin_file)
+line_color = helpers.getBuiltInColor(data_file_number)
+bin_analysis.plotData(axis=ax, xvar_name='L3_occupancy', yvar_name='service_time', line_style=(line_color + '.'), 
+	do_linear_regression=True, convertToMBytes=True, convertToMs=True)
+ax.set_xlabel('L3 Occupancy (MBytes)')
+ax.set_ylabel('service time (ms)')
+bin_analysis.clearData()
+data_file_number += 1
 
 #stored in the folder of the last processeed file
 dir_path = helpers.getDir(bin_file)

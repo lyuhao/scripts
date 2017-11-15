@@ -67,24 +67,27 @@ class BinAnalysis:
 		if do_linear_regression:
 			self.runLinearRegression(axis, xvar_data, yvar_data)
 
-	def plotDataVsMemoryBandWidth(self, axis, yvar_name, line_style = 'k-', _label = '', 
+	def plotDataVsMemoryBandWidth(self, axis, yvar_name, line_style = 'k-', _label = '',
 		do_linear_regression = False, convertToMBytes = False, convertToMs = False):
-		xvar_data = []
+		xvar_data = \
+			[read + write for read, write in zip(self.bin_data["socket_read"], self.bin_data["socket_write"])]
+		if convertToMBytes:
+			xvar_data = [data/1024/1024 for data in xvar_data]
 
-		for index, socket_read in enumerate(self.bin_data["socket_read"]):
-			socket_write = self.bin_data["socket_write"][idx]
-    		memory_bandwidth = socket_read + socket_write
-    		xvar_data.append(memory_bandwidth)
-
-    	# if convertToMBytes:
-    	# 	xvar_data = [data/1024/1024 for data in xvar_data]
-
+		# xvar_data = []
+		# socket_read_list = self.bin_data["socket_read"]
+		# print socket_read_list
+		# print str(len(socket_read_list))
+		# for index, socket_read in enumerate( socket_read_list):
+		# 	socket_write = self.bin_data["socket_write"][index]
+  #   		memory_bandwidth = socket_read + socket_write
+  #   		xvar_data.append(memory_bandwidth)
 		yvar_data = self.bin_data[yvar_name]
-
+		# print "memory_bandwidth length is " + str(len(xvar_data))
+		# print "y_var length is " + str(len(yvar_data))
 		if convertToMs:
 			if yvar_name == "service_time":
 				yvar_data = [data/1e6 for data in yvar_data]
-
 		if _label == '':
 			axis.plot(xvar_data, yvar_data, line_style)
 			
@@ -105,10 +108,11 @@ class BinAnalysis:
 		rightEndx = max(x_values)
 		leftEndy = leftEndx * slope + intercept
 		rightEndy = rightEndx * slope + intercept
-		axis.plot([leftEndx, rightEndx], [leftEndy, rightEndy], 'k-', label = 'line of best fit')
-		axis.text(leftEndx, leftEndy, 'y = ' + str(slope) + ' * x + ' + str(intercept) + '\nr = ' + str(r_value), \
+		axis.plot([leftEndx, rightEndx], [leftEndy, rightEndy], 'k-', label = 'line of best fit', linewidth=3)
+		axis.text((leftEndx + rightEndx)/4, rightEndy, 'y = ' + str(slope) + ' * x + ' + str(intercept) + '\nr = ' + str(r_value), \
 			fontsize=14)
-
-
+		with open('regression.coefficient', 'w') as f:
+			f.write(str(slope) + ' ' + str(intercept) + ' ' + str(r_value) + ' ' + str(p_value) + ' ' + str(std_err)) 
+			
 
 
