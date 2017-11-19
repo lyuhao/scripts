@@ -68,11 +68,12 @@ class BinAnalysis:
 			self.runLinearRegression(axis, xvar_data, yvar_data)
 
 	def plotDataVsMemoryBandWidth(self, axis, yvar_name, line_style = 'k-', _label = '',
-		do_linear_regression = False, convertToMBytes = False, convertToMs = False):
+		do_linear_regression = False, convertToGBytes = False, convertToMs = False):
 		xvar_data = \
-			[read + write for read, write in zip(self.bin_data["socket_read"], self.bin_data["socket_write"])]
-		if convertToMBytes:
-			xvar_data = [data/1024/1024 for data in xvar_data]
+			[(read + write)/(servTime/1e9) for read, write, servTime in zip(
+				self.bin_data["socket_read"], self.bin_data["socket_write", self.bin_data["service_time"]])]
+		if convertToGBytes:
+			xvar_data = [data/1024/1024/1024 for data in xvar_data]
 
 		# xvar_data = []
 		# socket_read_list = self.bin_data["socket_read"]

@@ -17,7 +17,7 @@ bin_analysis.readBinFile(bin_file)
 line_color = helpers.getBuiltInColor(data_file_number)
 bin_analysis.plotDataVsMemoryBandWidth(axis=ax, yvar_name='service_time', line_style=('b' + '.'), 
 		do_linear_regression=True, convertToMBytes=True, convertToMs=True)
-ax.set_xlabel('Memory Bandwidth (MBytes)')
+ax.set_xlabel('Memory Bandwidth (GB/s)')
 ax.set_ylabel('Service Time (ms)')
 bin_analysis.clearData()
 data_file_number += 1
