@@ -11,3 +11,4 @@ do
 	echo "$file MBW $(cat regression.coefficient)" >> coefficients.txt; 
 done
 
+echo "Correlation coefficients outupt to coefficients.txt"

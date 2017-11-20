@@ -71,7 +71,8 @@ class BinAnalysis:
 		do_linear_regression = False, convertToGBytes = False, convertToMs = False):
 		xvar_data = \
 			[(read + write)/(servTime/1e9) for read, write, servTime in zip(
-				self.bin_data["socket_read"], self.bin_data["socket_write", self.bin_data["service_time"]])]
+				self.bin_data["socket_read"], self.bin_data["socket_write"], 
+				self.bin_data["service_time"])]
 		if convertToGBytes:
 			xvar_data = [data/1024/1024/1024 for data in xvar_data]
 
